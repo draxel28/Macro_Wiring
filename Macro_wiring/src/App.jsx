@@ -8,7 +8,7 @@ function App() {
     <>
       <Navbar />
       <Hero />
-      <SectionA />
+      
 
       <main className="max-w-7xl mx-auto p-6">Content here</main>
     </>
