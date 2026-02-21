@@ -6,7 +6,9 @@ import SectionA from "./assets/components/section_a.jsx";
 function App() {
   return (
     <>
-     
+      <Navbar />
+      <Hero />
+      <SectionA />
 
       <main className="max-w-7xl mx-auto p-6">Content here</main>
     </>
