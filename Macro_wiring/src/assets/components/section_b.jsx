@@ -25,47 +25,23 @@ function Section_B() {
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
           {/* Card 1 */}
-          <div
-            className="group bg-white rounded-xl overflow-hidden shadow-lg 
-                hover:shadow-2xl hover:-translate-y-2 
-                transition-all duration-300 
-                hover:bg-gray-800"
-          >
-            {/* Image Section */}
+          <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-2">
             <div className="h-48 overflow-hidden">
               <img
                 src={CableAssy}
                 alt="Industrial Wiring"
-                className="w-full h-full object-cover 
-                 transition-transform duration-500 
-                 group-hover:scale-110"
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
               />
             </div>
-
-            {/* Text Section */}
             <div className="p-6">
-              <h3
-                className="text-lg font-semibold text-gray-800 mb-3 
-                   transition-colors duration-300 
-                   group-hover:text-white"
-              >
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 Industrial Grade Wires
               </h3>
-
-              <p
-                className="text-gray-600 mb-4 text-sm 
-                  transition-colors duration-300 
-                  group-hover:text-gray-300"
-              >
+              <p className="text-gray-600 mb-4 text-sm">
                 High-capacity wiring built for factories and heavy-duty
                 commercial applications.
               </p>
-
-              <button
-                className="text-blue-600 font-semibold 
-                       transition-colors duration-300 
-                       group-hover:text-blue-400"
-              >
+              <button className="text-blue-600 font-semibold hover:underline">
                 Learn More →
               </button>
             </div>
