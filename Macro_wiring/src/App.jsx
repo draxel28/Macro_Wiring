@@ -14,7 +14,6 @@ function App() {
       <SectionA />
       <SectionB />
       <SectionD />
-      <Footer />
     </>
   );
 }
