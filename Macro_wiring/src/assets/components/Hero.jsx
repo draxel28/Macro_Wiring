@@ -70,7 +70,7 @@ function Hero() {
       </section>
 
       {/* MARQUEE SECTION BELOW VIDEO */}
-      <section className="w-full py-3 overflow-hidden">
+      <section className="w-full py-6 overflow-hidden bg-gray-200">
         <div className="marquee-wrapper">
           <div className="marquee-track">
             {[...marqueeImages, ...marqueeImages].map((img, index) => (
@@ -86,8 +86,8 @@ function Hero() {
       </section>
 
       {/* Animation */}
-<style>
-{`
+      <style>
+        {`
 .marquee-wrapper{
   overflow:hidden;
   width:100%;
@@ -105,7 +105,7 @@ function Hero() {
   to { transform: translateX(-50%); }
 }
 `}
-</style>
+      </style>
     </>
   );
 }

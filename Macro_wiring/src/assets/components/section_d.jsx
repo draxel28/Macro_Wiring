@@ -43,12 +43,14 @@ function section_D() {
 
           <video
             className="relative rounded-2xl shadow-2xl w-full 
-                   h-87.5 md:h-112.5 object-cover 
-                   transition duration-500 group-hover:scale-105"
-            controls
-            poster="/thumbnail.jpg"
+             h-87.5 md:h-112.5 object-cover 
+             transition duration-500 group-hover:scale-105"
+            src={video}
+            autoPlay
+            loop
+            muted
+            playsInline
           >
-            <source src={video} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
