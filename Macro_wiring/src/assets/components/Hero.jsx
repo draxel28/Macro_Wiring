@@ -45,7 +45,7 @@ function Hero() {
           style={{ zIndex: 2 }}
         >
           <p className="text-4xl md:text-3xl max-w-3xl mb-8 text-gray-200">
-            Precision Wire Harness Solution
+            Precision Wire Harness Solution by JP
           </p>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
