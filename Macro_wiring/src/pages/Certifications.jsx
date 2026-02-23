@@ -2,15 +2,15 @@ import { useState } from "react";
 import { Search, Award, ShieldCheck, CheckCircle } from "lucide-react";
 
 // --- UPDATED IMAGE IMPORTS ---
-// We go up to src (../), then into assets/components/certificates/
-import iso9001 from "../assets/components/certificates/ISO 9001.png";
-import iso14001 from "../assets/components/certificates/ISO 14001.png";
-import ulLogo from "../assets/components/certificates/UL LOGO.png";
-import rohs from "../assets/components/certificates/ROHS REACH.png";
-import ecovadis from "../assets/components/certificates/ECOVADIS.png";
-import seipi from "../assets/components/certificates/seipi_logo.png";
-import bestImg from "../assets/components/certificates/BEST.png";
-import bestEmployer from "../assets/components/certificates/BEST EMPLOYER.png";
+// --- UPDATED IMAGE IMPORTS ---
+import iso9001 from "../assets/components/certificates/iso-9001.png";
+import iso14001 from "../assets/components/certificates/iso-14001.png";
+import ulLogo from "../assets/components/certificates/ul-logo.png";
+import rohs from "../assets/components/certificates/rohs-reach.png";
+import ecovadis from "../assets/components/certificates/ecovadis.png";
+import seipi from "../assets/components/certificates/seipi-logo.png";
+import bestImg from "../assets/components/certificates/best.png";
+import bestEmployer from "../assets/components/certificates/best-employer.png"; // Fixed typo in folder name
 
 const certData = [
   {
