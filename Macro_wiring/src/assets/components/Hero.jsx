@@ -22,10 +22,12 @@ function Hero() {
     marqueeImage7,
   ];
 
-return (
+  return (
     <>
-      {/* HERO SECTION */}
-      <section className="relative min-h-[80vh] md:h-[80vh] w-full flex items-center">
+      {/* HERO SECTION 
+          Added id="home" so the Navbar can scroll back here.
+      */}
+      <section id="home" className="relative min-h-[80vh] md:h-[80vh] w-full flex items-center">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src={videoBg}
@@ -34,7 +36,7 @@ return (
         />
 
         <div
-          className="absolute inset-0 bg-gray-900/90" // Using Tailwind opacity shorthand
+          className="absolute inset-0 bg-gray-900/90" 
           style={{ zIndex: 1 }}
         />
 
@@ -49,23 +51,23 @@ return (
             className="w-40 md:w-56 object-contain -mt-16"
           />
 
-          {/* Subheader: Smaller on mobile */}
+          {/* Subheader */}
           <p className="text-xl md:text-3xl max-w-3xl mb-4 text-gray-300 uppercase tracking-wide">
             Precision Wire Harness Solution 
           </p>
 
-          {/* Main Title: scaled down for mobile */}
+          {/* Main Title */}
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Making Our Wire Harnesses <br className="hidden md:block" /> Your Own
           </h1>
 
-          {/* Description: Adjusted font size */}
+          {/* Description */}
           <p className="text-base md:text-xl max-w-2xl mb-10 text-gray-200">
             With 20 years in the industry, we deliver trusted partner solutions
             for branded electronic products worldwide.
           </p>
 
-          {/* Buttons: Stacked on mobile, side-by-side on tablet+ */}
+          {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto">
               Get a Free Consultation
@@ -99,7 +101,7 @@ return (
         .marquee-wrapper { overflow: hidden; width: 100%; }
         .marquee-track {
           display: flex;
-          gap: 4rem; /* Reduced gap for better flow */
+          gap: 4rem; 
           width: max-content;
           animation: marqueeScroll 30s linear infinite;
         }

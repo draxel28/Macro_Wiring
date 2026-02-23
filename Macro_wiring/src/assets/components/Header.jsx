@@ -1,14 +1,31 @@
-import { useState } from 'react'; // Built-in, no external install needed
+import { useState } from 'react';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Function to handle smooth scrolling
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback to top if ID isn't found (useful for Home)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setIsOpen(false); // Close mobile menu after clicking
+  };
 
   return (
     <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center">
         
         {/* Logo */}
-        <h1 className="text-xl font-bold">Macro Wiring Technologies Co. Inc.</h1>
+        <h1 
+          className="text-xl font-bold cursor-pointer" 
+          onClick={() => scrollToSection('home')}
+        >
+          Macro Wiring Technologies Co. Inc.
+        </h1>
 
         {/* Mobile Menu Button */}
         <button 
@@ -27,8 +44,16 @@ function Navbar() {
         {/* Links */}
         <ul className={`${
           isOpen ? "block" : "hidden"
-        } w-full md:flex md:w-auto md:gap-8 text-sm font-medium mt-4 md:mt-0`}>
-          <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">Home</li>
+        } w-full md:flex md:w-auto md:gap-8 text-sm font-medium mt-4 md:mt-0 transition-all duration-300`}>
+          
+          {/* HOME LINK - Now Connected */}
+          <li 
+            onClick={() => scrollToSection('home')}
+            className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition"
+          >
+            Home
+          </li>
+
           <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">Products</li>
           <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">Certification</li>
           <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">About Us</li>
