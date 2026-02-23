@@ -1,4 +1,10 @@
 import React from "react";
+// 1. ADD THESE IMPORTS AT THE TOP
+import goldrichLogo from "../assets/components/group/goldrich-logo.jpg";
+import megaLogo from "../assets/components/group/mega-packaging.png";
+import macroLpgLogo from "../assets/components/group/macro-lpg.png";
+import macroIndustrialLogo from "../assets/components/group/macro-industrial-logo.png";
+import acreLogo from "../assets/components/group/acre-logo.png";
 import { 
   Target, Globe, Users, ShieldCheck, Leaf, Factory, 
   Zap, Award, Briefcase, BarChart3, UserCheck, Star 
@@ -121,6 +127,26 @@ const AboutUs = () => {
                 globally.
               </p>
             </div>
+          </div>
+        </section>
+
+{/* 3.5 THE MACRO GROUP OF COMPANIES */}
+        <section className="py-12 border-t border-gray-100">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">The Macro Group of Companies</h2>
+            <div className="h-1 w-20 bg-blue-600 mx-auto rounded-full mt-4"></div>
+            <p className="text-gray-500 mt-6 max-w-2xl mx-auto">
+              Strengthening our industry presence through a diversified network of allied companies 
+              dedicated to quality and service excellence.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 opacity-80 hover:opacity-100 transition-opacity duration-500">
+            <img src={goldrichLogo} alt="Goldrich" className="h-16 md:h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src={megaLogo} alt="Mega Packaging" className="h-16 md:h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src={macroLpgLogo} alt="Macro LPG" className="h-16 md:h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src={macroIndustrialLogo} alt="Macro Industrial" className="h-16 md:h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src={acreLogo} alt="Acre" className="h-16 md:h-20 w-auto object-contain grayscale hover:grayscale-0 transition-all" />
           </div>
         </section>
 
