@@ -20,57 +20,57 @@ function Hero() {
     marqueeImage7,
   ];
 
-  return (
+return (
     <>
-      {/* HERO SECTION (VIDEO ONLY) */}
-      <section className="relative h-[70vh] md:h-[80vh] w-full">
+      {/* HERO SECTION */}
+      <section className="relative min-h-[80vh] md:h-[80vh] w-full flex items-center">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src={videoBg}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
+          autoPlay loop muted playsInline preload="auto"
           style={{ zIndex: 0 }}
         />
 
         <div
-          className="absolute inset-0 bg-gray-900"
-          style={{ opacity: 0.9, zIndex: 1 }}
+          className="absolute inset-0 bg-gray-900/90" // Using Tailwind opacity shorthand
+          style={{ zIndex: 1 }}
         />
 
         <div
-          className="relative flex flex-col justify-center items-center h-full text-center px-6 text-white"
+          className="relative flex flex-col justify-center items-center h-full text-center px-6 text-white w-full"
           style={{ zIndex: 2 }}
         >
-          <p className="text-4xl md:text-3xl max-w-3xl mb-8 text-gray-200">
+          {/* Subheader: Smaller on mobile */}
+          <p className="text-xl md:text-3xl max-w-3xl mb-4 text-gray-300 uppercase tracking-wide">
             Precision Wire Harness Solution 
           </p>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Making Our Wire Harnesses Your Own
+          {/* Main Title: scaled down for mobile */}
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            Making Our Wire Harnesses <br className="hidden md:block" /> Your Own
           </h1>
 
-          <p className="text-lg md:text-3xl max-w-3xl mb-8 text-gray-200">
-            with 20 years in the industry we deliver trusted partner solutions
+          {/* Description: Adjusted font size */}
+          <p className="text-base md:text-xl max-w-2xl mb-10 text-gray-200">
+            With 20 years in the industry, we deliver trusted partner solutions
             for branded electronic products worldwide.
           </p>
 
-          <div className="flex gap-4 mt-6">
-            <button className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg text-lg transition">
+          {/* Buttons: Stacked on mobile, side-by-side on tablet+ */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <button className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto">
               Get a Free Consultation
             </button>
 
-            <button className="border border-white hover:bg-white hover:text-black px-8 py-3 rounded-lg text-lg transition">
+            <button className="border border-white hover:bg-white hover:text-black px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto">
               View Our Projects
             </button>
           </div>
         </div>
       </section>
 
-      {/* MARQUEE SECTION BELOW VIDEO */}
-      <section className="w-full py-6 overflow-hidden bg-gray-200">
+      {/* MARQUEE SECTION */}
+      <section className="w-full py-8 overflow-hidden bg-gray-100 border-y border-gray-300">
         <div className="marquee-wrapper">
           <div className="marquee-track">
             {[...marqueeImages, ...marqueeImages].map((img, index) => (
@@ -78,33 +78,30 @@ function Hero() {
                 key={index}
                 src={img}
                 alt="brand"
-                className="h-14 object-contain"
+                className="h-10 md:h-16 object-contain grayscale hover:grayscale-0 transition duration-300"
               />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Animation */}
       <style>
         {`
-.marquee-wrapper{
-  overflow:hidden;
-  width:100%;
-}
-
-.marquee-track{
-  display:flex;
-  gap:10rem;
-  width:max-content;
-  animation: marqueeScroll 35s linear infinite;
-}
-
-@keyframes marqueeScroll{
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-`}
+        .marquee-wrapper { overflow: hidden; width: 100%; }
+        .marquee-track {
+          display: flex;
+          gap: 4rem; /* Reduced gap for better flow */
+          width: max-content;
+          animation: marqueeScroll 30s linear infinite;
+        }
+        @keyframes marqueeScroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        @media (min-width: 768px) {
+          .marquee-track { gap: 10rem; }
+        }
+        `}
       </style>
     </>
   );
