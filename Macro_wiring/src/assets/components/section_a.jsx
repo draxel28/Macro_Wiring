@@ -5,30 +5,30 @@ import { History, ShieldCheck, Globe, Cog, X, CheckCircle2, Search } from "lucid
 
 // Certification Images (Updated to folder path)
 import bestImg from "./certificates/BEST.png";
-import bestEmployerImg from "./certificates/BEST EMPLOYER.png";
-import ecovadisImg from "./certificates/ECOVADIS.png";
-import iso9001Img from "./certificates/ISO 9001.png";
-import iso14001Img from "./certificates/ISO 14001.png";
-import rohsImg from "./certificates/ROHS REACH.png";
-import seipiImg from "./certificates/seipi_logo.png";
-import ulImg from "./certificates/UL LOGO.png";
+import bestEmployerImg from "./certificates/best-employer.png";
+import ecovadisImg from "./certificates/ecovadis.png";
+import iso9001Img from "./certificates/iso-9001.png";
+import iso14001Img from "./certificates/iso-14001.png";
+import rohsImg from "./certificates/rohs-reach.png";
+import seipiImg from "./certificates/seipi-logo.png";
+import ulImg from "./certificates/ul-logo.png";
 
 // Customer Logos (Inside customers folder)
 import schneiderImg from "./customers/Schneider_Electric.png";
-import apcImg from "./customers/APC LOGO.png";
+import apcImg from "./customers/apc-logo.png";
 import arkrayImg from "./customers/ARKRAY.jpg";
-import bomaxImg from "./customers/BOMAX LOGO.png";
-import edgeImg from "./customers/edge logo.png";
+import bomaxImg from "./customers/bomax-logo.png";
+import edgeImg from "./customers/edge-logo.png";
 import emsImg from "./customers/ems.png";
 import grandsunImg from "./customers/GRANDSUN.png";
-import ibsImg from "./customers/IBS LOGO.png";
+import ibsImg from "./customers/ibs-logo.png";
 import imesImg from "./customers/imes.png";
-import imiImg from "./customers/IMI LOGO.png";
-import ionicsImg from "./customers/ionics logo.png";
-import juyoungImg from "./customers/ju young logo.png";
-import rotakonImg from "./customers/ROTAKON LOGO.png";
-import schaffnerImg from "./customers/SCHAFFNER LOGO.png";
-import shinkozanImg from "./customers/SHINKOZAN LOGO.png";
+import imiImg from "./customers/imi-logo.png";
+import ionicsImg from "./customers/ionics-logo.png";
+import juyoungImg from "./customers/ju-young-logo.png";
+import rotakonImg from "./customers/rotakan-logo.png";
+import schaffnerImg from "./customers/schaffner-logo.png";
+import shinkozanImg from "./customers/shinkozan-logo.png";
 import veerImg from "./customers/VEER-O-METAL.png";
 import wyntronImg from "./customers/wyntroninclogo.png";
 
