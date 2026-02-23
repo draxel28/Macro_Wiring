@@ -1,4 +1,4 @@
-import { useState } from "react"; // Built-in, no external install needed
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function Navbar() {

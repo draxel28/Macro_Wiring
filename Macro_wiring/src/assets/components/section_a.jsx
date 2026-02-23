@@ -3,34 +3,34 @@ import { History, ShieldCheck, Globe, Cog, X, CheckCircle2, Search } from "lucid
 
 // --- IMAGE IMPORTS ---
 
-// Certification Images
-import bestImg from "./BEST.png";
-import bestEmployerImg from "./BEST EMPLOYER.png";
-import ecovadisImg from "./ECOVADIS.png";
-import iso9001Img from "./ISO 9001.png";
-import iso14001Img from "./ISO 14001.png";
-import rohsImg from "./ROHS REACH.png";
-import seipiImg from "./seipi_logo.png";
-import ulImg from "./UL LOGO.png";
+// Certification Images (Updated to folder path)
+import bestImg from "./certificates/BEST.png";
+import bestEmployerImg from "./certificates/BEST EMPLOYER.png";
+import ecovadisImg from "./certificates/ECOVADIS.png";
+import iso9001Img from "./certificates/ISO 9001.png";
+import iso14001Img from "./certificates/ISO 14001.png";
+import rohsImg from "./certificates/ROHS REACH.png";
+import seipiImg from "./certificates/seipi_logo.png";
+import ulImg from "./certificates/UL LOGO.png";
 
-// Customer Logos (Global Reach)
-import schneiderImg from "./Schneider_Electric.png";
-import apcImg from "./APC LOGO.png";
-import arkrayImg from "./ARKRAY.jpg";
-import bomaxImg from "./BOMAX LOGO.png";
-import edgeImg from "./edge logo.png";
-import emsImg from "./ems.png";
-import grandsunImg from "./GRANDSUN.png";
-import ibsImg from "./IBS LOGO.png";
-import imesImg from "./imes.png";
-import imiImg from "./IMI LOGO.png";
-import ionicsImg from "./ionics logo.png";
-import juyoungImg from "./ju young logo.png";
-import rotakonImg from "./ROTAKON LOGO.png";
-import schaffnerImg from "./SCHAFFNER LOGO.png";
-import shinkozanImg from "./SHINKOZAN LOGO.png";
-import veerImg from "./VEER-O-METAL.png";
-import wyntronImg from "./wyntroninclogo.png";
+// Customer Logos (Inside customers folder)
+import schneiderImg from "./customers/Schneider_Electric.png";
+import apcImg from "./customers/APC LOGO.png";
+import arkrayImg from "./customers/ARKRAY.jpg";
+import bomaxImg from "./customers/BOMAX LOGO.png";
+import edgeImg from "./customers/edge logo.png";
+import emsImg from "./customers/ems.png";
+import grandsunImg from "./customers/GRANDSUN.png";
+import ibsImg from "./customers/IBS LOGO.png";
+import imesImg from "./customers/imes.png";
+import imiImg from "./customers/IMI LOGO.png";
+import ionicsImg from "./customers/ionics logo.png";
+import juyoungImg from "./customers/ju young logo.png";
+import rotakonImg from "./customers/ROTAKON LOGO.png";
+import schaffnerImg from "./customers/SCHAFFNER LOGO.png";
+import shinkozanImg from "./customers/SHINKOZAN LOGO.png";
+import veerImg from "./customers/VEER-O-METAL.png";
+import wyntronImg from "./customers/wyntroninclogo.png";
 
 function SectionA() {
   const [selectedCard, setSelectedCard] = useState(null);
