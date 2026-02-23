@@ -1,19 +1,22 @@
 import "./App.css";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./assets/components/Header";
-import Hero from "./assets/components/Hero";
-import SectionA from "./assets/components/section_a.jsx";
-import SectionB from "./assets/components/section_b.jsx";
-import SectionD from "./assets/components/section_d.jsx";
-import Footer from "./assets/components/footer.jsx";
+import Footer from "./assets/components/footer";
+import Home from "./pages/Home";
+import Products from "./pages/products";
+import ScrollToTop from "./assets/components/scroll_to_top";
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Navbar />
-      <Hero />
-      <SectionA />
-      <SectionB />
-      <SectionD />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+      </Routes>
+
       <Footer />
     </>
   );

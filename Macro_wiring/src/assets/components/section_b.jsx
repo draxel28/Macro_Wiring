@@ -2,6 +2,7 @@ import CableAssy from "../products/CABLE.jpg";
 import circuitbreaker from "../products/CIRCUIT BREAKERS2.jpg";
 import iceCords from "../products/ICE CORDS.jpg";
 import seven from "../products/seven.png";
+import { Link } from "react-router-dom";
 function Section_B() {
   return (
     <section className="bg-gray-100 text-gray-800 py-20 px-6">
@@ -35,15 +36,19 @@ function Section_B() {
             </div>
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Industrial Grade Wires
+                Cable Assemblies
               </h3>
               <p className="text-gray-600 mb-4 text-sm">
                 High-capacity wiring built for factories and heavy-duty
                 commercial applications.
               </p>
-              <button className="text-blue-600 font-semibold hover:underline">
+              <Link
+                to="/products"
+                state={{ category: "Cable Assemblies" }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Learn More →
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -58,15 +63,19 @@ function Section_B() {
             </div>
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Residential Wire Systems
+                Injection Molding
               </h3>
               <p className="text-gray-600 mb-4 text-sm">
                 Safe and durable electrical wiring solutions designed for modern
                 homes.
               </p>
-              <button className="text-blue-600 font-semibold hover:underline">
+              <Link
+                to="/products"
+                state={{ category: "Injection Molding" }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Learn More →
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -81,15 +90,19 @@ function Section_B() {
             </div>
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Commercial Power Cables
+                Power Cords
               </h3>
               <p className="text-gray-600 mb-4 text-sm">
                 Reliable and efficient cables engineered for business and office
                 infrastructures.
               </p>
-              <button className="text-blue-600 font-semibold hover:underline">
+              <Link
+                to="/products"
+                state={{ category: "Power Cords" }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Learn More →
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -104,15 +117,19 @@ function Section_B() {
             </div>
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Flexible Copper Wires
+                Wire Harnesses
               </h3>
               <p className="text-gray-600 mb-4 text-sm">
                 Premium quality copper wiring built for flexibility,
                 conductivity, and long-term durability.
               </p>
-              <button className="text-blue-600 font-semibold hover:underline">
+              <Link
+                to="/products"
+                state={{ category: "Wire Harnesses" }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Learn More →
-              </button>
+              </Link>
             </div>
           </div>
         </div>
