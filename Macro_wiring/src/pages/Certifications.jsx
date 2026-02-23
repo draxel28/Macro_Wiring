@@ -7,7 +7,7 @@ import iso9001 from "../assets/components/certificates/iso-9001.png";
 import iso14001 from "../assets/components/certificates/iso-14001.png";
 import ulLogo from "../assets/components/certificates/ul-logo.png";
 import rohs from "../assets/components/certificates/rohs-reach.png";
-import ecovadis from "../assets/components/certificates/ecovadis.png";
+import ecovadis from "../assets/components/certificates/eco-vadis.png";
 import seipi from "../assets/components/certificates/seipi-logo.png";
 import bestImg from "../assets/components/certificates/best.png";
 import bestEmployer from "../assets/components/certificates/best-employer.png"; // Fixed typo in folder name

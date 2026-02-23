@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ProductCard from "../assets/components/Productcards";
-import CableAssy from "../assets/images/CABLE ASSEMBIES/CABLE ASSY.jpg";
-import CableAssy2 from "../assets/images/CABLE ASSEMBIES/CABLE ASSY2.jpg";
-import CableAssy3 from "../assets/images/CABLE ASSEMBIES/CABLE ASSY3.jpg";
-import CableAssy4 from "../assets/images/CABLE ASSEMBIES/CABLE ASSY4.jpg";
+import CableAssy from "../assets/images/CABLE ASSEMBIES/cable-assy.jpg";
+import CableAssy2 from "../assets/images/CABLE ASSEMBIES/cable-assy2.jpg";
+import CableAssy3 from "../assets/images/CABLE ASSEMBIES/cable-assy3.jpg";
+import CableAssy4 from "../assets/images/CABLE ASSEMBIES/cable-assy4.jpg";
 import seven from "../assets/images/INJECTION MOLDING/7.png";
 import eight from "../assets/images/INJECTION MOLDING/8.png";
 import nine from "../assets/images/INJECTION MOLDING/9.png";
@@ -14,10 +14,10 @@ import twenty from "../assets/images/INJECTION MOLDING/20.png";
 import twentyone from "../assets/images/INJECTION MOLDING/21.png";
 import twentytwo from "../assets/images/INJECTION MOLDING/23.png";
 import twentyfour from "../assets/images/POWER CORDS/24.png";
-import busbar_assemblies1 from "../assets/images/POWER CORDS/Busbar Assemblies 1.jpg";
-import busbar_assemblies2 from "../assets/images/POWER CORDS/Busbar Assemblies 2.jpg";
-import hubbel_leviton from "../assets/images/POWER CORDS/HUBBEL-LEVITON PLUGS.jpg";
-import icecords from "../assets/images/POWER CORDS/ICE CORDS.jpg";
+import busbar_assemblies1 from "../assets/images/POWER CORDS/busbar-assemblies1.jpg";
+import busbar_assemblies2 from "../assets/images/POWER CORDS/busbar-assemblies2.jpg";
+import hubbel_leviton from "../assets/images/POWER CORDS/hubel-leviton-plugs.jpg";
+import icecords from "../assets/images/POWER CORDS/ice-cords.jpg";
 import { useLocation } from "react-router-dom";
 const productData = [
   {
