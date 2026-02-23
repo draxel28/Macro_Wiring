@@ -4,7 +4,7 @@ import { History, ShieldCheck, Globe, Cog, X, CheckCircle2, Search } from "lucid
 // --- IMAGE IMPORTS ---
 
 // Certification Images (Updated to folder path)
-import bestImg from "./certificates/BEST.png";
+import bestImg from "./certificates/da-best-removebg-preview.png";
 import bestEmployerImg from "./certificates/best-employer.png";
 import ecovadisImg from "./certificates/eco-vadis.png";
 import iso9001Img from "./certificates/iso-9001.png";
