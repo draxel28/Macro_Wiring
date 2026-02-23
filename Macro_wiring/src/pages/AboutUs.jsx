@@ -13,7 +13,7 @@ const AboutUs = () => {
       {/* 1. HERO HEADER */}
       <div className="bg-gray-900 text-white py-24 px-6 text-center">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">About Us</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">About Us</h1>
           <p className="text-gray-400 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
             Macro Wiring Technologies Co. Inc. – Providing World-Class Interconnect 
             Solutions and Manufacturing Excellence since 1998.
