@@ -46,26 +46,27 @@ function SectionA() {
     }
   }, [selectedCard, fullscreenImage]);
 
-  const cardData = [
+const cardData = [
     {
       id: 1,
       icon: <History className="w-10 h-10 md:w-12 md:h-12 text-blue-600 mb-4 transition group-hover:text-blue-400" />,
       title: "Company History",
-      shortDesc: "Established in 2005, Macro Wiring has grown into a multi-plant leader in the industry.",
+      shortDesc: "Established in 2005, Macro Wiring has grown into a 100% Filipino-owned multi-plant leader.",
       isTimeline: true,
       timeline: [
-        { date: "August 2005", text: "Authorized by PEZA to conduct business within the Economic Zone of Rosario, Cavite. (Cert: 05-49)" },
-        { date: "October 2005", text: "Registered in the Bureau of Internal Revenue (BIR). Form 2303 : IRC0000331255." },
-        { date: "November 2005", text: "Registered with the Securities and Exchange Commission (SEC# CS200513165)." },
-        { date: "February 2006", text: "Gained UL-Recognized status for Wire Harness Production (Factory ID: E89012)." },
-        { date: "May 2011", text: "Certified in ISO 14001:2004 and ISO 9001:2008 for quality and environmental systems." },
-        { date: "November 2011", text: "Expanded production area by 100% to accommodate growing customer demands." },
-        { date: "March 2013", text: "Gained UL-Recognized status for Power Cords Production (Factory ID: E499130)." },
-        { date: "November 2013", text: "Introduced LEAN Management to boost production while maintaining high quality." },
-        { date: "February 2014", text: "Successful Re-certification of BS EN ISO 9001:2008 and ISO 14001:2004." },
-        { date: "July 2015", text: "Operations expanded again with 'Plant 2', a 1,216 sq. meter facility for warehouse and production." },
+        { date: "August 2005", text: "Establishment: Authorized by PEZA to operate within the Cavite Economic Zone (Cert: 05-49)." },
+        { date: "Oct - Nov 2005", text: "Legal Foundation: Registered with the BIR and SEC (SEC# CS200513165)." },
+        { date: "February 2006", text: "UL Recognition: Achieved status as a UL-Recognized manufacturer for Wire Harness Production." },
+        { date: "May 2011", text: "Global Standards: Certified in ISO 14001 (Environmental) and ISO 9001 (Quality) systems." },
+        { date: "November 2011", text: "Scaling Up: Expanded production area by 100% to accommodate surging global demand." },
+        { date: "March 2013", text: "Product Diversification: Gained UL recognition specifically for Power Cord Production." },
+        { date: "November 2013", text: "Efficiency: Adopted LEAN Management systems to optimize industrial cycles." },
+        { date: "February 2014", text: "Excellence Sustained: Successful re-certification of ISO 9001 and ISO 14001 standards." },
+        { date: "July 2015", text: "Multi-Plant Operation: Opened 'Plant 2', a 1,216 sqm facility for increased production and warehousing." },
+        { date: "2019", text: "Green Initiative: Launched the Zero Carbon Project with a 5-year sustainability roadmap." },
+        { date: "2024", text: "Sustainability Success: Achieved a 58% reduction in emissions intensity, exceeding original targets." },
       ],
-      closing: "We at Macro Wiring never stop improving. Our customers' satisfaction is our utmost priority."
+      closing: "From 2005 to today, we continue to align with UN Sustainable Development Goals and global manufacturing excellence."
     },
     {
       id: 2,
@@ -110,17 +111,17 @@ function SectionA() {
         { img: wyntronImg, alt: "Wyntron Inc" },
       ]
     },
-    {
+{
       id: 4,
       icon: <Cog className="w-10 h-10 md:w-12 md:h-12 text-blue-600 mb-4 transition group-hover:text-blue-400" />,
       title: "Operational Excellence",
-      shortDesc: "Advanced production capacity across two specialized plants with a Zero-Defect commitment.",
-      longDesc: "Macro Wiring Technologies operates with high-precision systems and Lean Management to ensure every wire harness and power cord meets the most demanding global requirements.",
+      shortDesc: "Machine-intensive production with a workforce of 500+ dedicated professionals.",
+      longDesc: "Macro Wiring Technologies operates with high-precision systems and Lean Management, specializing in fabrication ranging from AWG #32 to 350 MCM for the automotive and energy sectors.",
       points: [
-        "Two-Plant Capacity: Over 2,000 sq. meters of combined production/warehouse floor area.",
-        "Zero-Defect Culture: 100% continuity and safety testing conducted on all units.",
-        "Lean Management: Optimized production cycles to ensure on-time delivery and cost-efficiency.",
-        "Engineering Support: Specialized capability for custom prototyping and technical designs."
+        "Massive Workforce: 450+ skilled production workers and 50+ specialized admin staff.",
+        "Precision Range: Capable of producing harnesses from AWG #32 up to 350 MCM.",
+        "Eco-Friendly: 58% reduction in emissions intensity since 2019 through the Zero Carbon Project.",
+        "Industrial Reach: Serving Electronics, Automotive, Telecommunications, and Energy industries."
       ]
     }
   ];
