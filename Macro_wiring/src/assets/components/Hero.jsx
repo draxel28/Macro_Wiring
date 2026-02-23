@@ -1,13 +1,14 @@
 import videoBg from "./MWTC.mp4";
 import logo from "./mwtci logo.png";
-import marqueeImage from "./marqueeImage.png";
-import marqueeImage1 from "./marqueeImage1.png";
-import marqueeImage2 from "./marqueeImage2.png";
-import marqueeImage3 from "./marqueeImage3.png";
-import marqueeImage4 from "./marqueeImage4.png";
-import marqueeImage5 from "./marqueeImage5.png";
-import marqueeImage6 from "./marqueeImage6.png";
-import marqueeImage7 from "./marqueeImage7.png";
+// --- MARQUEE IMAGE IMPORTS ---
+import marqueeImage from "./marquee/marqueeImage.png";
+import marqueeImage1 from "./marquee/marqueeImage1.png";
+import marqueeImage2 from "./marquee/marqueeImage2.png";
+import marqueeImage3 from "./marquee/marqueeImage3.png";
+import marqueeImage4 from "./marquee/marqueeImage4.png";
+import marqueeImage5 from "./marquee/marqueeImage5.png";
+import marqueeImage6 from "./marquee/marqueeImage6.png";
+import marqueeImage7 from "./marquee/marqueeImage7.png";
 
 function Hero() {
   const marqueeImages = [
