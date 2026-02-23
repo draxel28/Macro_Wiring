@@ -1,4 +1,5 @@
 import videoBg from "./MWTC.mp4";
+import logo from "./mwtci logo.png";
 import marqueeImage from "./marqueeImage.png";
 import marqueeImage1 from "./marqueeImage1.png";
 import marqueeImage2 from "./marqueeImage2.png";
@@ -40,6 +41,13 @@ return (
           className="relative flex flex-col justify-center items-center h-full text-center px-6 text-white w-full"
           style={{ zIndex: 2 }}
         >
+          {/* LOGO */}
+          <img
+            src={logo}
+            alt="Company Logo"
+            className="w-40 md:w-56 object-contain -mt-16"
+          />
+
           {/* Subheader: Smaller on mobile */}
           <p className="text-xl md:text-3xl max-w-3xl mb-4 text-gray-300 uppercase tracking-wide">
             Precision Wire Harness Solution 
