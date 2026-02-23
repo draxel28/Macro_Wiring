@@ -64,19 +64,24 @@ function Navbar() {
             </Link>
           </li>
 
-          {/* Updated Certification Link */}
           <li className="py-2 md:py-0">
-            <Link to="/certifications" onClick={closeMenu} className="hover:text-blue-400 transition">
+            <Link to="/Certifications" onClick={closeMenu} className="hover:text-blue-400 transition">
               Certification
             </Link>
           </li>
 
-          <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">
-            About Us
+          {/* Updated About Us Link */}
+          <li className="py-2 md:py-0">
+            <Link to="/about-us" onClick={closeMenu} className="hover:text-blue-400 transition">
+              About Us
+            </Link>
           </li>
 
-          <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">
-            Contact
+          {/* Updated Contact Link placeholder */}
+          <li className="py-2 md:py-0">
+            <Link to="/contact" onClick={closeMenu} className="hover:text-blue-400 transition">
+              Contact
+            </Link>
           </li>
         </ul>
       </div>
