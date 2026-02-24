@@ -1,12 +1,13 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./assets/components/Header";
-import Footer from "./assets/components/footer";
+import Footer from "./assets/components/footer"; // Ensure case matches your filename
 import Home from "./pages/Home";
 import Products from "./pages/products";
 import Certifications from "./pages/Certifications";
-import AboutUs from "./pages/AboutUs"; // 1. Import the About Us page
+import AboutUs from "./pages/AboutUs";
 import ScrollToTop from "./assets/components/scroll_to_top";
+import CookieConsent from "./assets/components/CookieConsent"; // 1. IMPORT HERE
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
         <Route path="/certifications" element={<Certifications />} />
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
+
+      {/* 2. PLACE HERE (Global visibility) */}
+      <CookieConsent />
 
       <Footer />
     </>
