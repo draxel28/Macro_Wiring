@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Helper to close the mobile menu when a link is clicked
   const closeMenu = () => setIsOpen(false);
+
+  // Helper function for NavLink classes
+  const navLinkStyles = ({ isActive }) => 
+    `relative transition duration-300 pb-1 block md:inline-block ${
+      isActive 
+        ? "text-blue-400 active-link font-bold" 
+        : "text-white hover:text-blue-400"
+    } nav-link-animated`;
 
   return (
     <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
@@ -18,70 +24,49 @@ function Navbar() {
         </Link>
 
         {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden block text-white focus:outline-none"
-        >
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden block text-white focus:outline-none p-2">
+          <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
             )}
           </svg>
         </button>
 
         {/* Links */}
-        <ul
-          className={`${
-            isOpen ? "block" : "hidden"
-          } w-full md:flex md:w-auto md:gap-8 text-sm font-medium mt-4 md:mt-0`}
-        >
-          <li className="py-2 md:py-0">
-            <Link to="/" onClick={closeMenu} className="hover:text-blue-400 transition">
+        <ul className={`${
+          isOpen ? "flex flex-col py-6 space-y-6" : "hidden"
+        } w-full md:flex md:flex-row md:space-y-0 md:py-0 md:w-auto md:gap-8 text-base md:text-sm font-medium mt-4 md:mt-0 border-t border-gray-800 md:border-none`}>
+          
+          <li>
+            <NavLink to="/" end onClick={closeMenu} className={navLinkStyles}>
               Home
-            </Link>
+            </NavLink>
           </li>
-
-          <li className="py-2 md:py-0">
-            <Link to="/products" onClick={closeMenu} className="hover:text-blue-400 transition">
+          
+          <li>
+            <NavLink to="/products" onClick={closeMenu} className={navLinkStyles}>
               Products
-            </Link>
+            </NavLink>
           </li>
-
-          <li className="py-2 md:py-0">
-            <Link to="/Certifications" onClick={closeMenu} className="hover:text-blue-400 transition">
-              Certification
-            </Link>
+          
+          <li>
+            <NavLink to="/certifications" onClick={closeMenu} className={navLinkStyles}>
+              Certifications
+            </NavLink>
           </li>
-
-          {/* Updated About Us Link */}
-          <li className="py-2 md:py-0">
-            <Link to="/about-us" onClick={closeMenu} className="hover:text-blue-400 transition">
+          
+          <li>
+            <NavLink to="/about-us" onClick={closeMenu} className={navLinkStyles}>
               About Us
-            </Link>
+            </NavLink>
           </li>
 
-          {/* Updated Contact Link placeholder */}
-          <li className="py-2 md:py-0">
-            <Link to="/contact" onClick={closeMenu} className="hover:text-blue-400 transition">
+          <li>
+            <span className="relative pb-1 text-white opacity-60 cursor-default block md:inline-block">
               Contact
-            </Link>
+            </span>
           </li>
         </ul>
       </div>

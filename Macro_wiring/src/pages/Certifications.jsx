@@ -1,66 +1,279 @@
-import React, { useState, useEffect } from "react";
-import { ShieldCheck, X } from "lucide-react";
+import { useState } from "react";
 
-const CookieConsent = () => {
-  const [isVisible, setIsVisible] = useState(false);
+import { Search, Award, ShieldCheck, CheckCircle } from "lucide-react";
 
-  useEffect(() => {
-    // Check if user has already accepted cookies
-    const hasAccepted = localStorage.getItem("macro_cookies_accepted");
-    if (!hasAccepted) {
-      // Show after a 2-second delay for smoother UX
-      const timer = setTimeout(() => setIsVisible(true), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
-  const handleAccept = () => {
-    localStorage.setItem("macro_cookies_accepted", "true");
-    setIsVisible(false);
-  };
 
-  if (!isVisible) return null;
+// --- UPDATED IMAGE IMPORTS ---
+
+// --- UPDATED IMAGE IMPORTS ---
+
+import iso9001 from "../assets/components/certificates/iso-9001.png";
+
+import iso14001 from "../assets/components/certificates/iso-14001.png";
+
+import ulLogo from "../assets/components/certificates/ul-logo.png";
+
+import rohs from "../assets/components/certificates/rohs-reach.png";
+
+import ecovadis from "../assets/components/certificates/eco-vadis.png";
+
+import seipi from "../assets/components/certificates/seipi-logo.png";
+
+import bestImg from "../assets/components/certificates/da-best-removebg-preview.png";
+
+import bestEmployer from "../assets/components/certificates/best-employer.png"; // Fixed typo in folder name
+
+
+
+const certData = [
+
+  {
+
+    category: "Management Systems",
+
+    items: [
+
+      { name: "ISO 9001:2015", description: "Quality Management System", image: iso9001, status: "Certified" },
+
+      { name: "ISO 14001:2015", description: "Environmental Management System", image: iso14001, status: "Certified" },
+
+    ],
+
+  },
+
+  {
+
+    category: "Product Safety",
+
+    items: [
+
+      { name: "UL Recognized", description: "Wire Harness & Power Cord Safety (E89012)", image: ulLogo, status: "Active" },
+
+      { name: "RoHS & REACH", description: "Environmental Material Compliance", image: rohs, status: "Compliant" },
+
+    ],
+
+  },
+
+  {
+
+    category: "Industry & ESG",
+
+    items: [
+
+      { name: "EcoVadis Silver", description: "Sustainability & CSR Rating", image: ecovadis, status: "Awarded" },
+
+      { name: "SEIPI Member", description: "Semiconductor & Electronics Industry", image: seipi, status: "Member" },
+
+      { name: "Best Employer", description: "PEZA Outstanding Employer Award", image: bestEmployer, status: "Awarded" },
+
+      { name: "PEME Quality", description: "Excellence in Manufacturing", image: bestImg, status: "Awarded" },
+
+    ],
+
+  },
+
+];
+
+
+
+const Certifications = () => {
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+
+
+  const categories = ["All", ...certData.map((c) => c.category)];
+
+
+
+  // Flatten and Filter logic (Mirrors your Products.jsx logic)
+
+  const allCerts = certData.flatMap((cat) =>
+
+    cat.items.map((item) => ({ ...item, category: cat.category }))
+
+  );
+
+
+
+  const filteredCerts = allCerts.filter((cert) => {
+
+    const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory = selectedCategory === "All" || cert.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+
+  });
+
+
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 z-[200] md:left-auto md:max-w-md animate-in fade-in slide-in-from-bottom-10 duration-700">
-      <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 relative overflow-hidden">
-        {/* Subtle Background Decoration */}
-        <div className="absolute -right-4 -top-4 text-blue-50 opacity-50">
-          <ShieldCheck size={100} />
-        </div>
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="bg-blue-600 p-2 rounded-xl text-white">
-              <ShieldCheck size={20} />
-            </div>
-            <h4 className="font-bold text-gray-900">Privacy Preference</h4>
-          </div>
+    <div className="bg-gray-50 min-h-screen">
 
-          <p className="text-xs text-gray-600 leading-relaxed mb-6">
-            We use cookies and process personal data to ensure the best experience on our website, 
-            in compliance with the <b>Data Privacy Act of 2012</b>. By continuing, you agree to our 
-            Terms and Privacy Policy.
+      {/* Header Section */}
+
+      <div className="bg-gray-900 text-white py-20 px-6">
+
+        <div className="max-w-7xl mx-auto text-center">
+
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Quality Assurance</h1>
+
+          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+
+            Our commitment to excellence is verified by international governing bodies and global industry standards.
+
           </p>
 
-          <div className="flex gap-3">
-            <button 
-              onClick={handleAccept}
-              className="flex-1 bg-gray-900 text-white text-[11px] font-black uppercase tracking-widest py-3 rounded-xl hover:bg-black transition active:scale-95 shadow-lg shadow-gray-200"
-            >
-              Accept All
-            </button>
-            <button 
-              onClick={() => setIsVisible(false)}
-              className="px-4 py-3 text-gray-400 hover:text-gray-600 transition"
-            >
-              <X size={18} />
-            </button>
-          </div>
         </div>
+
       </div>
+
+
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+         
+
+          {/* Sidebar Filter (Consistent with Products layout) */}
+
+          <div className="md:col-span-1 space-y-8">
+
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+
+                <Search className="w-5 h-5 text-blue-600" /> Filter
+
+              </h2>
+
+
+
+              <div className="mb-8">
+
+                <input
+
+                  type="text"
+
+                  placeholder="Search standards..."
+
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
+
+                  value={searchTerm}
+
+                  onChange={(e) => setSearchTerm(e.target.value)}
+
+                />
+
+              </div>
+
+
+
+              <div className="space-y-2">
+
+                <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">Categories</h3>
+
+                {categories.map((cat) => (
+
+                  <button
+
+                    key={cat}
+
+                    onClick={() => setSelectedCategory(cat)}
+
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition ${
+
+                      selectedCategory === cat
+
+                      ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
+
+                      : "text-gray-600 hover:bg-gray-100"
+
+                    }`}
+
+                  >
+
+                    {cat}
+
+                  </button>
+
+                ))}
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          {/* Certificates Grid */}
+
+          <div className="md:col-span-3">
+
+            {filteredCerts.length === 0 ? (
+
+              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+
+                <p className="text-gray-500">No matching certifications found.</p>
+
+              </div>
+
+            ) : (
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+                {filteredCerts.map((cert, i) => (
+
+                  <div key={i} className="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+
+                    <div className="h-40 flex items-center justify-center mb-6 bg-gray-50 rounded-xl p-4">
+
+                      <img src={cert.image} alt={cert.name} className="max-h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+
+                    </div>
+
+                    <div className="flex justify-between items-start mb-2">
+
+                      <h3 className="font-bold text-gray-900 leading-tight">{cert.name}</h3>
+
+                      <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase">
+
+                        {cert.status}
+
+                      </span>
+
+                    </div>
+
+                    <p className="text-sm text-gray-500">{cert.description}</p>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+
   );
+
 };
 
-export default CookieConsent;
+
+
+export default Certifications;

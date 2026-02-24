@@ -1,0 +1,49 @@
+/* Base style for the link container */
+.nav-link-animated {
+  display: block; /* Changed from inline-block to allow full width on mobile */
+  position: relative;
+  width: 100%; /* Default to full width for mobile separator look */
+}
+
+/* On Desktop: keep the line only under the text */
+@media (min-width: 768px) {
+  .nav-link-animated {
+    display: inline-block;
+    width: fit-content;
+  }
+}
+
+/* The Animated Line */
+.nav-link-animated::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #60a5fa; /* blue-400 */
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+/* Hover effect */
+.nav-link-animated:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* --- THE MOVING BACK & FORTH ANIMATION (Unchanged) --- */
+@keyframes backAndForth {
+  0% { transform: scaleX(0.3); transform-origin: bottom left; }
+  50% { transform: scaleX(1); transform-origin: bottom left; }
+  51% { transform: scaleX(1); transform-origin: bottom right; }
+  100% { transform: scaleX(0.3); transform-origin: bottom right; }
+}
+
+/* Apply animation ONLY to the active link */
+.active-link::after {
+  transform: scaleX(1);
+  animation: backAndForth 2s ease-in-out infinite;
+  background-color: #60a5fa;
+}

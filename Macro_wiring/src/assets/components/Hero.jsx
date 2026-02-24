@@ -1,5 +1,8 @@
+import React from "react";
+import { Link } from "react-router-dom"; // 1. Import Link
 import videoBg from "./MWTC.mp4";
 import logo from "./mwtci logo.png";
+
 // --- MARQUEE IMAGE IMPORTS ---
 import marqueeImage from "./marquee/marqueeImage.png";
 import marqueeImage1 from "./marquee/marqueeImage1.png";
@@ -24,9 +27,6 @@ function Hero() {
 
   return (
     <>
-      {/* HERO SECTION 
-          Added id="home" so the Navbar can scroll back here.
-      */}
       <section id="home" className="relative min-h-[80vh] md:h-[80vh] w-full flex items-center">
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -44,38 +44,42 @@ function Hero() {
           className="relative flex flex-col justify-center items-center h-full text-center px-6 text-white w-full"
           style={{ zIndex: 2 }}
         >
-          {/* LOGO */}
           <img
             src={logo}
             alt="Company Logo"
             className="w-40 md:w-56 object-contain -mt-16"
           />
 
-          {/* Subheader */}
           <p className="text-xl md:text-3xl max-w-3xl mb-4 text-gray-300 uppercase tracking-wide">
             Precision Wire Harness Solution 
           </p>
 
-          {/* Main Title */}
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Making Our Wire Harnesses <br className="hidden md:block" /> Your Own
           </h1>
 
-          {/* Description */}
           <p className="text-base md:text-xl max-w-2xl mb-10 text-gray-200">
             With 20 years in the industry, we deliver trusted partner solutions
             for branded electronic products worldwide.
           </p>
 
-          {/* Buttons */}
+          {/* BUTTONS SECTION */}
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <button className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto">
-              Get a Free Consultation
-            </button>
+            {/* 2. Link to the products page route defined in App.jsx */}
+            <Link 
+              to="/products" 
+              className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto text-center"
+            >
+              View Our Products
+            </Link>
 
-            <button className="border border-white hover:bg-white hover:text-black px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto">
-              View Our Projects
-            </button>
+            {/* 3. Get In Touch (Anchor link to footer/contact section) */}
+            <a 
+              href="#contact" 
+              className="border border-white hover:bg-white hover:text-black px-8 py-4 rounded-lg text-lg font-semibold transition w-full sm:w-auto text-center"
+            >
+              Get In Touch
+            </a>
           </div>
         </div>
       </section>
