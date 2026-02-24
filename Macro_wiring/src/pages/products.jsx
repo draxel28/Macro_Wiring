@@ -1,9 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Search } from "lucide-react";
-import ProductCard from "../assets/components/Productcards";
 
-// --- IMAGE IMPORTS ---
+// --- PATHS ---
+import ProductCard from "../assets/components/Productcards"; 
+import "../App.css"; 
+
+// --- IMAGES ---
 import CableAssy from "../assets/images/CABLE ASSEMBIES/cable-assy.jpg";
 import CableAssy2 from "../assets/images/CABLE ASSEMBIES/cable-assy2.jpg";
 import CableAssy3 from "../assets/images/CABLE ASSEMBIES/cable-assy3.jpg";
@@ -11,12 +14,7 @@ import CableAssy4 from "../assets/images/CABLE ASSEMBIES/cable-assy4.jpg";
 import seven from "../assets/images/INJECTION MOLDING/7.png";
 import eight from "../assets/images/INJECTION MOLDING/8.png";
 import nine from "../assets/images/INJECTION MOLDING/9.png";
-import ten from "../assets/images/INJECTION MOLDING/10.png";
-import eighteen from "../assets/images/INJECTION MOLDING/18.png";
-import nineteen from "../assets/images/INJECTION MOLDING/19.png";
 import twenty from "../assets/images/INJECTION MOLDING/20.png";
-import twentyone from "../assets/images/INJECTION MOLDING/21.png";
-import twentytwo from "../assets/images/INJECTION MOLDING/23.png";
 import twentyfour from "../assets/images/POWER CORDS/24.png";
 import busbar_assemblies1 from "../assets/images/POWER CORDS/busbar-assemblies1.jpg";
 import busbar_assemblies2 from "../assets/images/POWER CORDS/busbar-assemblies2.jpg";
@@ -93,26 +91,41 @@ const Products = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Header Section - MATCHES CERTIFICATIONS STYLE */}
-      <div className="bg-gray-900 text-white py-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+      {/* Header Section */}
+      <div className="tech-header-container text-white py-16 px-6">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="motherboard-traces"></div>
+          <div className="moving-glow"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 
+            className="text-4xl md:text-5xl font-black mb-4 tracking-tight uppercase"
+            style={{ 
+              textShadow: '0 0 15px rgba(96, 165, 250, 0.6)',
+              letterSpacing: '0.02em'
+            }}
+          >
+            Our Products
+          </h1>
+          <div className="h-1 w-20 bg-blue-500 mx-auto mb-6 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+          <p className="text-blue-100 max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
             High-quality wiring solutions and precision components tailored for global industrial standards.
           </p>
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        {/* added items-start to keep sidebar from stretching and breaking sticky */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
           
           {/* Sidebar Filter */}
-          <div className="md:col-span-1 space-y-8">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+          <div className="md:col-span-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Search className="w-5 h-5 text-blue-600" /> Filter
               </h2>
-
               <div className="mb-8">
                 <input
                   type="text"
@@ -122,7 +135,6 @@ const Products = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">Categories</h3>
                 {categories.map((category, index) => (
@@ -142,7 +154,6 @@ const Products = () => {
             </div>
           </div>
 
-          {/* Products Grid */}
           <div className="md:col-span-3">
             {filteredProducts.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">

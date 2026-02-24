@@ -1,26 +1,46 @@
 import React from "react";
-// 1. ADD THESE IMPORTS AT THE TOP
+// 1. IMAGE IMPORTS
 import goldrichLogo from "../assets/components/group/goldrich-logo.jpg";
 import megaLogo from "../assets/components/group/mega-packaging.png";
 import macroLpgLogo from "../assets/components/group/macro-lpg.png";
 import macroIndustrialLogo from "../assets/components/group/macro-industrial-logo.png";
 import acreLogo from "../assets/components/group/acre-logo.png";
+import founderImage from "../assets/components/founder/sirjerry.jpg";
+
 import { 
   Target, Globe, Users, ShieldCheck, Leaf, Factory, 
   Zap, Award, Briefcase, BarChart3, UserCheck, Star 
 } from "lucide-react";
 
-// Image import based on your directory structure
-import founderImage from "../assets/components/founder/sirjerry.jpg";
+// CSS Import
+import "../App.css"; 
 
 const AboutUs = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* 1. HERO HEADER */}
-      <div className="bg-gray-900 text-white py-24 px-6 text-center">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">About Us</h1>
-          <p className="text-gray-400 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
+      {/* --- MATCHING MOTHERBOARD HEADER --- */}
+      <div className="tech-header-container text-white py-16 px-6">
+        {/* Background Animation Layers */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="motherboard-traces"></div>
+          <div className="moving-glow"></div>
+        </div>
+
+        {/* Content Layer */}
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 
+            className="text-4xl md:text-5xl font-black mb-4 tracking-tight uppercase"
+            style={{ 
+              textShadow: '0 0 15px rgba(96, 165, 250, 0.6)',
+              letterSpacing: '0.02em'
+            }}
+          >
+            About Us
+          </h1>
+          
+          <div className="h-1 w-20 bg-blue-500 mx-auto mb-6 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+          
+          <p className="text-blue-100 max-w-3xl mx-auto text-base md:text-lg font-light leading-relaxed drop-shadow-md">
             Macro Wiring Technologies Co. Inc. – Providing World-Class Interconnect 
             Solutions and Manufacturing Excellence since 1998.
           </p>
@@ -130,7 +150,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-{/* 3.5 THE MACRO GROUP OF COMPANIES */}
+        {/* 3.5 THE MACRO GROUP OF COMPANIES */}
         <section className="py-12 border-t border-gray-100">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">The Macro Group of Companies</h2>
