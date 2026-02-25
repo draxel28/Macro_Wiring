@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, ArrowUp } from "lucide-react";
 import "../App.css"; 
 
 // --- UPDATED IMAGE IMPORTS ---
@@ -42,6 +42,44 @@ const Certifications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  // --- SCROLL TO TOP STATES ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Monitor scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show/Hide logic
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // Overlap prevention logic
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      // Adjust the 120 value based on your footer height
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const categories = ["All", ...certData.map((c) => c.category)];
 
   const allCerts = certData.flatMap((cat) =>
@@ -55,7 +93,7 @@ const Certifications = () => {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen relative">
       {/* Header Section */}
       <div className="tech-header-container text-white py-16 px-6">
         <div className="absolute inset-0 pointer-events-none">
@@ -144,6 +182,22 @@ const Certifications = () => {
           </div>
         </div>
       </div>
+
+      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON (RIGHT SIDE) --- */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
+          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
     </div>
   );
 };

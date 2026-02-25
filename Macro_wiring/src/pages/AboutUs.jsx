@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 // 1. IMAGE IMPORTS
 import goldrichLogo from "../assets/components/group/goldrich-logo.jpg";
 import megaLogo from "../assets/components/group/mega-packaging.png";
@@ -11,14 +11,51 @@ import sapProcessFlow from "../assets/components/process/sap-flow.jpg";
 import { 
   Target, Globe, Users, ShieldCheck, Factory, 
   Zap, BarChart3, Star, HeartPulse, 
-  ChevronRight, Settings, Leaf 
+  ChevronRight, Settings, Leaf, ArrowUp 
 } from "lucide-react";
 
 import "../App.css"; 
 
 const AboutUs = () => {
+  // --- SCROLL TO TOP STATES ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Monitor scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show/Hide logic (show after 400px)
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // Overlap prevention logic (adjust 120 based on footer height)
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-gray-50 min-h-screen font-sans relative">
       {/* --- TECH HEADER --- */}
       <div className="tech-header-container text-white py-16 px-6 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 pointer-events-none">
@@ -55,7 +92,7 @@ const AboutUs = () => {
                 <Star size={14} fill="currentColor" /> Executive Leadership
               </div>
               <h2 className="text-4xl font-bold text-gray-900 uppercase">Jerenato B. Alfante</h2>
-              <p className="text-xl text-blue-600 font-bold uppercase tracking-tight">President and COO</p>
+              <p className="text-xl text-blue-600 font-bold uppercase tracking-tight">President</p>
               <p className="text-gray-600 leading-relaxed italic text-lg">
                 "Driving innovation and quality excellence in the wire harness industry through dedicated leadership and operational precision."
               </p>
@@ -226,7 +263,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* 6. ZERO CARBON PROJECT (TZCP) - RESTORED STYLING */}
+        {/* 6. ZERO CARBON PROJECT (TZCP) */}
         <section className="bg-green-50 p-10 md:p-16 rounded-[3rem] border border-green-100 relative overflow-hidden">
           <Leaf className="absolute -right-16 -bottom-16 text-green-200 opacity-20" size={350} />
           <div className="relative z-10">
@@ -243,7 +280,6 @@ const AboutUs = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-10">
-              {/* Base Year Card */}
               <div className="bg-white/70 backdrop-blur-md p-8 rounded-3xl border border-white">
                 <h4 className="font-black text-gray-400 uppercase text-xs mb-6 tracking-[0.2em]">Base Year (2019)</h4>
                 <div className="space-y-4">
@@ -255,7 +291,6 @@ const AboutUs = () => {
                 </div>
               </div>
 
-              {/* Reporting Year Card */}
               <div className="bg-white p-8 rounded-3xl border-2 border-green-500 shadow-2xl shadow-green-100">
                 <h4 className="font-black text-green-600 uppercase text-xs mb-6 tracking-[0.2em]">Reporting Year (2024)</h4>
                 <div className="space-y-4">
@@ -323,6 +358,23 @@ const AboutUs = () => {
         </section>
 
       </div>
+
+      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON (RIGHT SIDE) --- */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
+          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
+
     </div>
   );
 };
