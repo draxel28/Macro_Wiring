@@ -40,29 +40,31 @@ function Hero() {
           className="relative flex flex-col justify-center items-center h-full text-center px-6 text-white w-full"
           style={{ zIndex: 2 }}
         >
+          {/* Logo with Slide Down Entrance */}
           <img
             src={logo}
             alt="Company Logo"
-            className="w-40 md:w-56 object-contain -mt-16 mb-2 drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+            className="w-40 md:w-56 object-contain -mt-16 mb-2 drop-shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-fade-in-down"
           />
 
-          <p className="text-blue-400 text-sm md:text-lg font-bold uppercase tracking-[0.3em] mb-4">
+          <p className="text-blue-400 text-sm md:text-lg font-bold uppercase tracking-[0.3em] mb-4 animate-fade-in-down" style={{ animationDelay: '0.2s' }}>
             Precision Wire Harness Solutions
           </p>
 
-          <h1 className="text-3xl sm:text-4xl md:text-7xl font-black mb-6 leading-tight uppercase tracking-tight">
+          {/* MAIN HEADING with Slide Up Entrance */}
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-black mb-6 leading-tight uppercase tracking-tight animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             Making Our Wire Harnesses <br className="hidden md:block" /> 
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-white">
               Your Own
             </span>
           </h1>
 
-          <p className="text-base md:text-xl max-w-2xl mb-10 text-gray-300 font-light leading-relaxed">
+          <p className="text-base md:text-xl max-w-2xl mb-10 text-gray-300 font-light leading-relaxed animate-fade-in" style={{ animationDelay: '0.8s' }}>
             With over <span className="text-white font-semibold">20 years</span> in the industry, we deliver trusted partner solutions for branded electronic products worldwide.
           </p>
 
-          {/* BUTTONS SECTION */}
-          <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+          {/* BUTTONS SECTION with Fade Entrance */}
+          <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto animate-fade-in" style={{ animationDelay: '1s' }}>
             <Link 
               to="/products" 
               className="bg-blue-600 hover:bg-blue-500 px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] text-center"
@@ -80,13 +82,8 @@ function Hero() {
         </div>
       </section>
 
-{/* MARQUEE SECTION - Responsive spacing fix */}
-      <section className="relative z-10 w-full bg-white border-y border-gray-200 overflow-hidden 
-        /* Mobile: Pull up with negative margin | Desktop: Normal alignment */
-        -mt-6 md:mt-0 
-        /* Mobile: Tight padding | Desktop: Spacious padding */
-        py-6 md:py-14"
-      >
+      {/* MARQUEE SECTION */}
+      <section className="relative z-10 w-full bg-white border-y border-gray-200 overflow-hidden -mt-6 md:mt-0 py-6 md:py-14">
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-gray-400 text-[9px] md:text-xs uppercase tracking-[0.4em] mb-6 md:mb-10 font-bold">
             Trusted Industry Partners
@@ -110,17 +107,44 @@ function Hero() {
 
       <style>
         {`
-        /* Slow Zoom for Video */
+        /* 1. Slow Zoom for Video */
         @keyframes slowZoom {
           0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
+          50% { transform: scale(1.05); }
           100% { transform: scale(1); }
         }
         .animate-slow-zoom {
-          animation: slowZoom 30s ease-in-out infinite;
+          animation: slowZoom 20s ease-in-out infinite;
         }
 
-        /* Fade-out Edges for Marquee */
+        /* 2. Entrance Animations */
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          opacity: 0;
+        }
+        .animate-fade-in-down {
+          animation: fadeInDown 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          opacity: 0;
+        }
+        .animate-fade-in {
+          animation: fadeIn 1.5s ease forwards;
+          opacity: 0;
+        }
+
+        /* 3. Marquee Styles */
         .marquee-wrapper { 
           overflow: hidden; 
           width: 100%; 
@@ -128,12 +152,12 @@ function Hero() {
           -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
 
-.marquee-track {
-  display: flex;
-  gap: 3rem; /* Mobile gap */
-  width: max-content;
-  animation: marqueeScroll 40s linear infinite;
-}
+        .marquee-track {
+          display: flex;
+          gap: 3rem; 
+          width: max-content;
+          animation: marqueeScroll 40s linear infinite;
+        }
 
         .marquee-track:hover {
           animation-play-state: paused;
@@ -144,10 +168,11 @@ function Hero() {
           to { transform: translateX(-50%); }
         }
 
-@media (min-width: 768px) {
-  .marquee-track { 
-    gap: 8rem; /* Desktop gap - not too wide, not too tight */
-  }
+        @media (min-width: 768px) {
+          .marquee-track { 
+            gap: 8rem; 
+          }
+        }
         `}
       </style>
     </>
