@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom"; 
 import videoBg from "./MWTC.mp4";
-import logo from "./mwtci logo.png";
+import logo from "./mwtci-logo.png";
 
 // --- MARQUEE IMAGE IMPORTS ---
 import marqueeImage from "./marquee/marqueeImage.png";
