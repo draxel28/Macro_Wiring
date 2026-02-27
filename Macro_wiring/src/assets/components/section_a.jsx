@@ -1,34 +1,31 @@
 import { useState, useEffect } from 'react';
-import { History, ShieldCheck, Globe, Cog, X, CheckCircle2, Search } from "lucide-react";
+import { History, ShieldCheck, Globe, Cog, X, CheckCircle2, Search, ArrowUp } from "lucide-react";
 
 // --- IMAGE IMPORTS ---
+import bestImg from "./certificates/da-best-removebg-preview.png";
+import bestEmployerImg from "./certificates/best-employer.png";
+import ecovadisImg from "./certificates/eco-vadis.png";
+import iso9001Img from "./certificates/iso-9001.png";
+import iso14001Img from "./certificates/iso-14001.png";
+import rohsImg from "./certificates/rohs-reach.png";
+import seipiImg from "./certificates/seipi-logo.png";
+import ulImg from "./certificates/ul-logo.png";
 
-// Certification Images (Updated to folder path)
-import bestImg from "./certificates/BEST.png";
-import bestEmployerImg from "./certificates/BEST EMPLOYER.png";
-import ecovadisImg from "./certificates/ECOVADIS.png";
-import iso9001Img from "./certificates/ISO 9001.png";
-import iso14001Img from "./certificates/ISO 14001.png";
-import rohsImg from "./certificates/ROHS REACH.png";
-import seipiImg from "./certificates/seipi_logo.png";
-import ulImg from "./certificates/UL LOGO.png";
-
-// Customer Logos (Inside customers folder)
 import schneiderImg from "./customers/Schneider_Electric.png";
-import apcImg from "./customers/APC LOGO.png";
+import apcImg from "./customers/apc-logo.png";
 import arkrayImg from "./customers/ARKRAY.jpg";
-import bomaxImg from "./customers/BOMAX LOGO.png";
-import edgeImg from "./customers/edge logo.png";
+import bomaxImg from "./customers/bomax-logo.png";
+import edgeImg from "./customers/edge-logo.png";
 import emsImg from "./customers/ems.png";
 import grandsunImg from "./customers/GRANDSUN.png";
-import ibsImg from "./customers/IBS LOGO.png";
+import ibsImg from "./customers/ibs-logo.png";
 import imesImg from "./customers/imes.png";
-import imiImg from "./customers/IMI LOGO.png";
-import ionicsImg from "./customers/ionics logo.png";
-import juyoungImg from "./customers/ju young logo.png";
-import rotakonImg from "./customers/ROTAKON LOGO.png";
-import schaffnerImg from "./customers/SCHAFFNER LOGO.png";
-import shinkozanImg from "./customers/SHINKOZAN LOGO.png";
+import imiImg from "./customers/imi-logo.png";
+import ionicsImg from "./customers/ionics-logo.png";
+import juyoungImg from "./customers/ju-young-logo.png";
+import rotakonImg from "./customers/rotakan-logo.png";
+import schaffnerImg from "./customers/schaffner-logo.png";
+import shinkozanImg from "./customers/shinkozan-logo.png";
 import veerImg from "./customers/VEER-O-METAL.png";
 import wyntronImg from "./customers/wyntroninclogo.png";
 
@@ -36,17 +33,52 @@ function SectionA() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [fullscreenImage, setFullscreenImage] = useState(null);
 
-  // Fix for the "Stuck/Stock" scrolling issue:
-  // Disables body scroll when a modal is active.
+  // --- SCROLL TO TOP STATES ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Combined Effect for Modal Lock and Scroll Tracking
   useEffect(() => {
+    // Modal Lock
     if (selectedCard || fullscreenImage) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
+
+    // Scroll Listener
+    const handleScroll = () => {
+      // Show/Hide logic
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // Overlap prevention logic
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [selectedCard, fullscreenImage]);
 
-const cardData = [
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const cardData = [
     {
       id: 1,
       icon: <History className="w-10 h-10 md:w-12 md:h-12 text-blue-600 mb-4 transition group-hover:text-blue-400" />,
@@ -111,7 +143,7 @@ const cardData = [
         { img: wyntronImg, alt: "Wyntron Inc" },
       ]
     },
-{
+    {
       id: 4,
       icon: <Cog className="w-10 h-10 md:w-12 md:h-12 text-blue-600 mb-4 transition group-hover:text-blue-400" />,
       title: "Operational Excellence",
@@ -155,7 +187,6 @@ const cardData = [
           <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setSelectedCard(null)}></div>
           
           <div className="relative bg-white w-full max-w-4xl max-h-full overflow-y-auto rounded-3xl shadow-2xl animate-in zoom-in duration-200">
-            {/* Sticky Header for Modal */}
             <div className="sticky top-0 bg-white/90 backdrop-blur-md px-8 py-6 flex justify-between items-center border-b z-20">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{selectedCard.title}</h2>
               <button onClick={() => setSelectedCard(null)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
@@ -164,7 +195,6 @@ const cardData = [
             </div>
 
             <div className="p-8 md:p-12">
-              {/* GALLERY VIEW (Certs & Global Reach) */}
               {selectedCard.isGallery ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                   {selectedCard.gallery.map((item, idx) => (
@@ -182,9 +212,7 @@ const cardData = [
                   ))}
                 </div>
               ) : selectedCard.isTimeline ? (
-                /* HISTORY TIMELINE VIEW */
                 <div className="space-y-6 text-left">
-                   
                   <div className="border-l-2 border-blue-500 ml-3 space-y-8 pb-4">
                     {selectedCard.timeline.map((item, idx) => (
                       <div key={idx} className="relative pl-8">
@@ -199,7 +227,6 @@ const cardData = [
                   </div>
                 </div>
               ) : (
-                /* OPERATIONAL EXCELLENCE VIEW */
                 <div className="text-left">
                   <p className="text-lg text-gray-600 mb-10 leading-relaxed border-l-4 border-blue-600 pl-6 italic">
                     {selectedCard.longDesc}
@@ -230,7 +257,7 @@ const cardData = [
       {fullscreenImage && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md transition-all" onClick={() => setFullscreenImage(null)}>
           <button onClick={() => setFullscreenImage(null)} className="absolute top-8 right-8 text-white flex items-center gap-2 font-bold hover:text-blue-400 transition scale-90 hover:scale-100">
-             CLOSE <X className="w-10 h-10" />
+              CLOSE <X className="w-10 h-10" />
           </button>
           
           <div className="max-w-4xl w-full flex flex-col items-center animate-in zoom-in duration-300">
@@ -241,6 +268,22 @@ const cardData = [
           </div>
         </div>
       )}
+
+      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON (RIGHT SIDE) --- */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
+          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
     </section>
   );
 }
