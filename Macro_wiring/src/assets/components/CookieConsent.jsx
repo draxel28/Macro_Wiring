@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Lock, ShieldCheck, Scale, FileText, CheckCircle2 } from "lucide-react";
+import { Lock, ShieldCheck, Scale, FileText, CheckCircle2, ChevronRight } from "lucide-react";
 
 // Memoized checkbox for stable rendering with larger text
 const AgreementCheckbox = React.memo(({ checked, onChange, label }) => (
@@ -57,31 +57,39 @@ const CookieConsent = () => {
       
       {!isWelcoming ? (
         /* --- HIGH READABILITY CONSENT CARD --- */
-        <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
+        <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
           
           {/* Header Section */}
           <div className="p-10 pb-6 flex flex-col items-center text-center">
             <div className="bg-blue-600 text-white p-5 rounded-2xl mb-6 shadow-xl shadow-blue-200">
               <Lock size={36} />
             </div>
-            <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Privacy & Data Consent</h2>
-            <p className="text-[14px] text-gray-500 leading-relaxed max-w-md">
-              In compliance with the <b>Philippine Data Privacy Act (RA 10173)</b>, we require your consent to use cookies for functionality and traffic analysis.
+            <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Legal Compliance</h2>
+            <p className="text-[14px] text-gray-500 leading-relaxed max-w-lg">
+              In compliance with the <b>Philippine Data Privacy Act of 2012 (RA 10173)</b>, Macro Wiring Technologies Co. Inc. ensures all personal data is handled securely.
             </p>
           </div>
 
           {/* Expanded Legal Content Area */}
-          <div className="mx-10 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 space-y-8 max-h-[40vh] overflow-y-auto custom-scrollbar shadow-inner">
+          <div className="mx-6 md:mx-10 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 space-y-8 max-h-[45vh] overflow-y-auto custom-scrollbar shadow-inner">
             
-            {/* Policy Section */}
+            {/* Privacy Policy Section */}
             <section className="space-y-4">
               <div className="flex items-center gap-3 text-green-600">
                 <ShieldCheck size={22} />
                 <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Privacy Policy</h3>
               </div>
-              <p className="text-[14px] text-gray-600 leading-relaxed">
-                Data is processed in line with our <b>ISO 9001:2015</b> quality standards. You have the right to access, correct, or request deletion of submitted data.
-              </p>
+              <div className="space-y-4 text-[14px] text-gray-600 leading-relaxed">
+                <p>
+                  We collect personal information (Name, Email, Contact Number) <b>only</b> when voluntarily submitted via our Contact Us form. This data is used exclusively to respond to your specific business inquiries and is processed in line with our <b>ISO 9001:2015</b> quality procedures.
+                </p>
+                <p>
+                  <b>Information Security:</b> We do not provide public user accounts. Your information is stored in secured internal systems protected against unauthorized access. We do not sell or share details with third-party marketers.
+                </p>
+                <p>
+                  <b>Your Privacy Rights:</b> You have the right to request access to the information you submitted, ask for its correction, or request that we permanently delete your inquiry data from our records.
+                </p>
+              </div>
             </section>
 
             <div className="h-px bg-gray-200 w-full" />
@@ -90,16 +98,21 @@ const CookieConsent = () => {
             <section className="space-y-4">
               <div className="flex items-center gap-3 text-blue-600">
                 <Scale size={22} />
-                <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Terms of Service</h3>
+                <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Terms & Conditions</h3>
               </div>
+              <p className="text-[13px] text-gray-500 italic">
+                Access to and use of this website is subject to the laws of the Republic of the Philippines.
+              </p>
               <div className="space-y-3">
                 {[
-                  { t: "Philippine Scope", d: "Information is applicable specifically within the Philippines." },
-                  { t: "Intellectual Property", d: "Reproduction of Macro Wiring source code or images is prohibited." },
-                  { t: "Liability", d: "Use of this site is at the user's risk." }
+                  { t: "Philippine Scope", d: "Information concerning products or services is applicable only in the Philippines." },
+                  { t: "Intellectual Property", d: "Distribution, modification, or reproduction of content (text, images, source code) is prohibited without written permission." },
+                  { t: "Liability Disclaimer", d: "Browsing is at the user's risk. We assume no liability for errors or omissions in site contents." },
+                  { t: "Communications", d: "Inquiries transmitted to this site are treated as non-confidential for business processing purposes." },
+                  { t: "Third-Party Links", d: "We are not responsible for the content of any off-site pages or linked websites." }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 items-start">
-                    <FileText size={16} className="text-gray-400 mt-1 flex-shrink-0" />
+                    <ChevronRight size={16} className="text-blue-500 mt-1 flex-shrink-0" />
                     <p className="text-[14px] text-gray-600 leading-snug">
                       <span className="font-bold text-gray-800">{item.t}:</span> {item.d}
                     </p>
@@ -131,7 +144,7 @@ const CookieConsent = () => {
           </div>
         </div>
       ) : (
-        /* --- NEW PROFESSIONAL TYPOGRAPHY WELCOME --- */
+        /* --- WELCOME ANIMATION --- */
         <div className="flex flex-col items-center justify-center text-center px-6 max-w-4xl">
           <p className="text-blue-400 text-xl md:text-2xl font-light uppercase tracking-[0.6em] mb-4 animate-welcome-text">
             Welcome to
@@ -150,7 +163,6 @@ const CookieConsent = () => {
       <style>{`
         .transform-gpu { transform: translateZ(0); backface-visibility: hidden; }
         
-        /* Custom Clean Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
