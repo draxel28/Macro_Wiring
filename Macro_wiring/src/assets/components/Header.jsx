@@ -1,86 +1,161 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Helper to close the mobile menu when a link is clicked
   const closeMenu = () => setIsOpen(false);
 
+  const navigate = useNavigate(); // ✅ YOU WERE MISSING THIS
+
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState("");
+
+  const handleAdminLogin = () => {
+    if (adminPassword === "MacroAdmin123") {
+      sessionStorage.setItem("admin_access", "true");
+      setShowAdminModal(false);
+      setAdminPassword("");
+      setAdminError("");
+      navigate("/admin");
+    } else {
+      setAdminError("Incorrect password.");
+    }
+  };
+
+  const navLinkStyles = ({ isActive }) =>
+    `relative transition duration-300 pb-1 block md:inline-block ${
+      isActive
+        ? "text-blue-400 active-link font-bold"
+        : "text-white hover:text-blue-400"
+    } nav-link-animated`;
+
   return (
-    <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center">
-        {/* Logo */}
-        <Link to="/" onClick={closeMenu}>
-          <h1 className="text-xl font-bold hover:text-blue-400 transition cursor-pointer">
-            Macro Wiring Technologies Co. Inc.
-          </h1>
-        </Link>
+    <>
+      <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center">
+          <Link to="/" onClick={closeMenu}>
+            <h1 className="text-xl font-bold hover:text-blue-400 transition cursor-pointer">
+              Macro Wiring Technologies Co. Inc.
+            </h1>
+          </Link>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden block text-white focus:outline-none"
-        >
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden block text-white focus:outline-none p-2"
           >
-            {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
+            ☰
+          </button>
+
+          <ul
+            className={`${
+              isOpen ? "flex flex-col py-6 space-y-6" : "hidden"
+            } w-full md:flex md:flex-row md:space-y-0 md:py-0 md:w-auto md:gap-8`}
+          >
+            <li>
+              <NavLink to="/" end onClick={closeMenu} className={navLinkStyles}>
+                Home
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/products"
+                onClick={closeMenu}
+                className={navLinkStyles}
+              >
+                Products
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/certifications"
+                onClick={closeMenu}
+                className={navLinkStyles}
+              >
+                Certifications
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/about-us"
+                onClick={closeMenu}
+                className={navLinkStyles}
+              >
+                About Us
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/contact"
+                onClick={closeMenu}
+                className={navLinkStyles}
+              >
+                Contact Us
+              </NavLink>
+            </li>
+
+            <li>
+              <button
+                onClick={() => {
+                  closeMenu();
+                  setShowAdminModal(true);
+                }}
+                className="text-white hover:text-blue-400"
+              >
+                Admin
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      {/* ✅ Modal MUST be inside return */}
+      {showAdminModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 relative">
+            <button
+              onClick={() => {
+                setShowAdminModal(false);
+                setAdminError("");
+                setAdminPassword("");
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+              Admin Login
+            </h2>
+
+            <div className="space-y-4">
+              <input
+                type="password"
+                placeholder="Enter admin password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none"
               />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            )}
-          </svg>
-        </button>
 
-        {/* Links */}
-        <ul
-          className={`${
-            isOpen ? "block" : "hidden"
-          } w-full md:flex md:w-auto md:gap-8 text-sm font-medium mt-4 md:mt-0`}
-        >
-          <li className="py-2 md:py-0">
-            <Link to="/" onClick={closeMenu} className="hover:text-blue-400 transition">
-              Home
-            </Link>
-          </li>
+              {adminError && (
+                <p className="text-red-500 text-sm">{adminError}</p>
+              )}
 
-          <li className="py-2 md:py-0">
-            <Link to="/products" onClick={closeMenu} className="hover:text-blue-400 transition">
-              Products
-            </Link>
-          </li>
-
-          {/* Updated Certification Link */}
-          <li className="py-2 md:py-0">
-            <Link to="/certifications" onClick={closeMenu} className="hover:text-blue-400 transition">
-              Certification
-            </Link>
-          </li>
-
-          <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">
-            About Us
-          </li>
-
-          <li className="py-2 md:py-0 hover:text-blue-400 cursor-pointer transition">
-            Contact
-          </li>
-        </ul>
-      </div>
-    </nav>
+              <button
+                onClick={handleAdminLogin}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

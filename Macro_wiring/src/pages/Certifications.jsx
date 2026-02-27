@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Search, Award, ShieldCheck, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, ArrowUp } from "lucide-react";
+import "../App.css"; 
 
-// --- UPDATED IMAGE IMPORTS ---
 // --- UPDATED IMAGE IMPORTS ---
 import iso9001 from "../assets/components/certificates/iso-9001.png";
 import iso14001 from "../assets/components/certificates/iso-14001.png";
@@ -10,7 +10,7 @@ import rohs from "../assets/components/certificates/rohs-reach.png";
 import ecovadis from "../assets/components/certificates/eco-vadis.png";
 import seipi from "../assets/components/certificates/seipi-logo.png";
 import bestImg from "../assets/components/certificates/da-best-removebg-preview.png";
-import bestEmployer from "../assets/components/certificates/best-employer.png"; // Fixed typo in folder name
+import bestEmployer from "../assets/components/certificates/best-employer.png";
 
 const certData = [
   {
@@ -42,9 +42,46 @@ const Certifications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  // --- SCROLL TO TOP STATES ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Monitor scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show/Hide logic
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // Overlap prevention logic
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      // Adjust the 120 value based on your footer height
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const categories = ["All", ...certData.map((c) => c.category)];
 
-  // Flatten and Filter logic (Mirrors your Products.jsx logic)
   const allCerts = certData.flatMap((cat) =>
     cat.items.map((item) => ({ ...item, category: cat.category }))
   );
@@ -56,27 +93,40 @@ const Certifications = () => {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen relative">
       {/* Header Section */}
-      <div className="bg-gray-900 text-white py-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Quality Assurance</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+      <div className="tech-header-container text-white py-16 px-6">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="motherboard-traces"></div>
+          <div className="moving-glow"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 
+            className="text-4xl md:text-5xl font-black mb-4 tracking-tight uppercase"
+            style={{ 
+              textShadow: '0 0 15px rgba(96, 165, 250, 0.6)',
+              letterSpacing: '0.02em'
+            }}
+          >
+            Quality Assurance
+          </h1>
+          <div className="h-1 w-20 bg-blue-500 mx-auto mb-6 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+          <p className="text-blue-100 max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
             Our commitment to excellence is verified by international governing bodies and global industry standards.
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
           
-          {/* Sidebar Filter (Consistent with Products layout) */}
-          <div className="md:col-span-1 space-y-8">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+          {/* Sidebar Filter */}
+          <div className="md:col-span-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Search className="w-5 h-5 text-blue-600" /> Filter
               </h2>
-
               <div className="mb-8">
                 <input
                   type="text"
@@ -86,7 +136,6 @@ const Certifications = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-
               <div className="space-y-2">
                 <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">Categories</h3>
                 {categories.map((cat) => (
@@ -94,8 +143,8 @@ const Certifications = () => {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      selectedCategory === cat 
-                      ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600" 
+                      selectedCategory === cat
+                      ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
                       : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
@@ -133,6 +182,22 @@ const Certifications = () => {
           </div>
         </div>
       </div>
+
+      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON (RIGHT SIDE) --- */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
+          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import CableAssy from "../products/CABLE.jpg";
 import circuitbreaker from "../products/CIRCUIT BREAKERS2.jpg";
 import iceCords from "../products/ICE CORDS.jpg";
-import seven from "../products/seven.png";
+import seven from "../products/HOUSING.jpg";
 import { Link } from "react-router-dom";
 function Section_B() {
   return (
