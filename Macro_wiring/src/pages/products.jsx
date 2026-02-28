@@ -171,7 +171,7 @@ const Products = () => {
               letterSpacing: "0.02em",
             }}
           >
-            Drexel
+            Products
           </h1>
           <div className="h-1 w-20 bg-blue-500 mx-auto mb-6 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
           <p className="text-blue-100 max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
