@@ -165,7 +165,7 @@ const AboutUs = () => {
               and allied businesses in the export processing zones of the country, and catch the nod of approval of our 
               customers as they make our wire harnesses and assemblies their own."
             </p>
-            <p className="text-[10px] text-blue-200 mt-6 font-bold uppercase tracking-widest">Effective: July 14, 2015</p>
+            <p className="text-[10px] text-blue-200 mt-6 font-bold uppercase tracking-widest">Effectivity Date: July 14, 2015</p>
           </div>
 
           <div className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
@@ -187,7 +187,7 @@ const AboutUs = () => {
                 </div>
               ))}
             </div>
-            <p className="text-center text-[10px] text-gray-400 mt-10 font-bold uppercase tracking-widest">Effective: July 14, 2015</p>
+            <p className="text-center text-[10px] text-gray-400 mt-10 font-bold uppercase tracking-widest">Effectivity Date: July 14, 2015</p>
           </div>
         </section>
 
