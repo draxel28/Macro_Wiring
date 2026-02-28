@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import { Search, ArrowUp } from "lucide-react";
 
 // --- PATHS ---
-import ProductCard from "../assets/components/Productcards"; 
-import "../App.css"; 
+import ProductCard from "../assets/components/Productcards";
+import "../App.css";
 
 // --- IMAGES ---
 import CableAssy from "../assets/images/CABLE ASSEMBIES/cable-assy.jpg";
@@ -25,9 +25,21 @@ const productData = [
   {
     category: "Cable Assemblies",
     items: [
-      { name: "WH-1001", description: "Automotive wire harness", image: CableAssy },
-      { name: "WH-1002", description: "Industrial wire harness", image: CableAssy2 },
-      { name: "WH-1003", description: "Custom wire harness", image: CableAssy3 },
+      {
+        name: "WH-1001",
+        description: "Automotive wire harness",
+        image: CableAssy,
+      },
+      {
+        name: "WH-1002",
+        description: "Industrial wire harness",
+        image: CableAssy2,
+      },
+      {
+        name: "WH-1003",
+        description: "Custom wire harness",
+        image: CableAssy3,
+      },
       { name: "WH-1004", description: "Heavy-duty harness", image: CableAssy4 },
     ],
   },
@@ -44,9 +56,21 @@ const productData = [
     category: "Power Cords",
     items: [
       { name: "CA-3001", description: "High-speed cable", image: twentyfour },
-      { name: "CA-3002", description: "USB cable assembly", image: busbar_assemblies1 },
-      { name: "CA-3003", description: "HDMI assembly", image: busbar_assemblies2 },
-      { name: "CA-3004", description: "Industrial cable", image: hubbel_leviton },
+      {
+        name: "CA-3002",
+        description: "USB cable assembly",
+        image: busbar_assemblies1,
+      },
+      {
+        name: "CA-3003",
+        description: "HDMI assembly",
+        image: busbar_assemblies2,
+      },
+      {
+        name: "CA-3004",
+        description: "Industrial cable",
+        image: hubbel_leviton,
+      },
       { name: "CA-3005", description: "ICE Cords", image: icecords },
     ],
   },
@@ -63,9 +87,9 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const [selectedCategories, setSelectedCategories] = useState(
-    location.state?.category ? [location.state.category] : []
+    location.state?.category ? [location.state.category] : [],
   );
-  
+
   // State for Scroll to Top Button
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -117,12 +141,16 @@ const Products = () => {
     category.items.map((item) => ({
       ...item,
       category: category.category,
-    }))
+    })),
   );
 
   const filteredProducts = allProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.category);
     return matchesSearch && matchesCategory;
   });
 
@@ -136,18 +164,19 @@ const Products = () => {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <h1 
+          <h1
             className="text-4xl md:text-5xl font-black mb-4 tracking-tight uppercase"
-            style={{ 
-              textShadow: '0 0 15px rgba(96, 165, 250, 0.6)',
-              letterSpacing: '0.02em'
+            style={{
+              textShadow: "0 0 15px rgba(96, 165, 250, 0.6)",
+              letterSpacing: "0.02em",
             }}
           >
-            Our Products
+            Drexel
           </h1>
           <div className="h-1 w-20 bg-blue-500 mx-auto mb-6 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
           <p className="text-blue-100 max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
-            High-quality wiring solutions and precision components tailored for global industrial standards.
+            High-quality wiring solutions and precision components tailored for
+            global industrial standards.
           </p>
         </div>
       </div>
@@ -155,7 +184,6 @@ const Products = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
-          
           {/* Sidebar Filter */}
           <div className="md:col-span-1">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
@@ -172,9 +200,14 @@ const Products = () => {
                 />
               </div>
               <div className="space-y-3">
-                <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">Categories</h3>
+                <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">
+                  Categories
+                </h3>
                 {categories.map((category, index) => (
-                  <label key={index} className="flex items-center space-x-3 cursor-pointer group">
+                  <label
+                    key={index}
+                    className="flex items-center space-x-3 cursor-pointer group"
+                  >
                     <input
                       type="checkbox"
                       checked={selectedCategories.includes(category)}
@@ -194,7 +227,9 @@ const Products = () => {
           <div className="md:col-span-3">
             {filteredProducts.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
-                <p className="text-gray-500">No products found matching your criteria.</p>
+                <p className="text-gray-500">
+                  No products found matching your criteria.
+                </p>
               </div>
             ) : (
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -221,8 +256,8 @@ const Products = () => {
           transition-all duration-500 
           hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
           active:scale-95 flex items-center justify-center 
-          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
-          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+          ${isAtBottom ? "bottom-24 right-8" : "bottom-8 right-8"}
+          ${showScrollTop ? "opacity-100 scale-100" : "opacity-0 scale-50 translate-y-10 pointer-events-none"}`}
         aria-label="Scroll to top"
       >
         <ArrowUp className="w-6 h-6" />
