@@ -36,7 +36,7 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center">
           <Link to="/" onClick={closeMenu}>
             <h1 className="text-xl font-bold hover:text-blue-400 transition cursor-pointer">
-              Macro Wiring Technologies Co. Inc.
+              Drexel B. Santos
             </h1>
           </Link>
 

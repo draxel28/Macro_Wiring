@@ -25,7 +25,7 @@ const productData = [
   {
     category: "Cable Assemblies",
     items: [
-      { name: "WH-1001", description: "Automotive wire harness", image: CableAssy },
+      { name: "WH-1002", description: "Automotive wire harness", image: CableAssy },
       { name: "WH-1002", description: "Industrial wire harness", image: CableAssy2 },
       { name: "WH-1003", description: "Custom wire harness", image: CableAssy3 },
       { name: "WH-1004", description: "Heavy-duty harness", image: CableAssy4 },
