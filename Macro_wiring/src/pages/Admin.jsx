@@ -10,6 +10,7 @@ import {
   LineElement,
   Tooltip,
   Legend,
+  Filler, // Required for gradient background
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -21,6 +22,7 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend,
+  Filler // Registering Filler
 );
 
 export default function Admin() {
@@ -173,6 +175,7 @@ export default function Admin() {
     return d;
   });
 
+  // --- IMPROVED CHART DATA CONFIG ---
   const chartData = {
     labels: last7Days.map((d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" })),
     datasets: [
@@ -183,12 +186,56 @@ export default function Admin() {
           created.setHours(0, 0, 0, 0);
           return created.getTime() === day.getTime();
         }).length),
-        borderColor: "#1e293b",
-        backgroundColor: "rgba(30, 41, 59, 0.1)",
-        tension: 0.3,
+        borderColor: "#2563eb", // Modern Blue
+        borderWidth: 3,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: "#2563eb",
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        tension: 0.4, // Smooth curve
         fill: true,
+        backgroundColor: (context) => {
+          const ctx = context.chart.ctx;
+          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+          gradient.addColorStop(0, "rgba(37, 99, 235, 0.2)");
+          gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
+          return gradient;
+        },
       },
     ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1e293b",
+        padding: 12,
+        cornerRadius: 8,
+        titleFont: { size: 12, weight: 'bold' },
+        bodyFont: { size: 12 },
+        displayColors: false,
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: "#94a3b8", font: { size: 11 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: "rgba(226, 232, 240, 0.5)", drawBorder: false },
+        ticks: { 
+          color: "#94a3b8", 
+          font: { size: 11 },
+          stepSize: 1,
+          precision: 0 
+        }
+      }
+    }
   };
 
   return (
@@ -249,16 +296,19 @@ export default function Admin() {
             <EnterpriseCard title="Monthly Total" value={monthMessages} icon="📈" />
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-            <div className="flex justify-between items-center mb-8">
-              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Message Activity (Last 7 Days)
-              </h3>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full">{new Date().toLocaleDateString()}</span>
+          <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm transition-all hover:shadow-md">
+            <div className="flex justify-between items-center mb-10">
+              <div>
+                <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest flex items-center gap-3">
+                  <span className="w-3 h-3 bg-blue-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.4)]"></span>
+                  Message Activity
+                </h3>
+                <p className="text-[10px] text-slate-400 font-bold ml-6 mt-1 uppercase tracking-tight">Analytics for the last 7 days</p>
+              </div>
+              <span className="text-[10px] font-black text-slate-500 bg-slate-50 border border-slate-100 px-4 py-1.5 rounded-full shadow-sm">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
-            <div className="h-[300px]">
-              <Line data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+            <div className="h-[350px]">
+              <Line data={chartData} options={chartOptions} />
             </div>
           </div>
         </section>
