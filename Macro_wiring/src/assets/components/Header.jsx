@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
 
-  const navigate = useNavigate(); // ✅ YOU WERE MISSING THIS
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
@@ -23,12 +24,22 @@ function Navbar() {
     }
   };
 
+  const isAdminActive = location.pathname === "/admin";
+
+  // Common styles: 'w-full' ensures the animated line spans the menu width
   const navLinkStyles = ({ isActive }) =>
-    `relative transition duration-300 pb-1 block md:inline-block ${
+    `relative transition duration-300 pb-1 block w-full text-left nav-link-animated ${
       isActive
         ? "text-blue-400 active-link font-bold"
         : "text-white hover:text-blue-400"
-    } nav-link-animated`;
+    }`;
+
+  // Admin button forced to 'w-full' so the underline animation is long
+  const adminButtonStyle = `relative transition duration-300 pb-1 block w-full text-left nav-link-animated bg-transparent border-none cursor-pointer ${
+    isAdminActive
+      ? "text-blue-400 active-link font-bold"
+      : "text-white hover:text-blue-400"
+  }`;
 
   return (
     <>
@@ -50,61 +61,45 @@ function Navbar() {
           <ul
             className={`${
               isOpen ? "flex flex-col py-6 space-y-6" : "hidden"
-            } w-full md:flex md:flex-row md:space-y-0 md:py-0 md:w-auto md:gap-8`}
+            } w-full md:flex md:flex-row md:space-y-0 md:py-0 md:w-auto md:gap-8 items-start`}
           >
-            <li>
+            <li className="w-full md:w-auto">
               <NavLink to="/" end onClick={closeMenu} className={navLinkStyles}>
                 Home
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/products"
-                onClick={closeMenu}
-                className={navLinkStyles}
-              >
+            <li className="w-full md:w-auto">
+              <NavLink to="/products" onClick={closeMenu} className={navLinkStyles}>
                 Products
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/certifications"
-                onClick={closeMenu}
-                className={navLinkStyles}
-              >
+            <li className="w-full md:w-auto">
+              <NavLink to="/certifications" onClick={closeMenu} className={navLinkStyles}>
                 Certifications
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/about-us"
-                onClick={closeMenu}
-                className={navLinkStyles}
-              >
+            <li className="w-full md:w-auto">
+              <NavLink to="/about-us" onClick={closeMenu} className={navLinkStyles}>
                 About Us
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/contact"
-                onClick={closeMenu}
-                className={navLinkStyles}
-              >
+            <li className="w-full md:w-auto">
+              <NavLink to="/contact" onClick={closeMenu} className={navLinkStyles}>
                 Contact Us
               </NavLink>
             </li>
 
-            <li>
+            <li className="w-full md:w-auto">
               <button
                 onClick={() => {
                   closeMenu();
                   setShowAdminModal(true);
                 }}
-                className="text-white hover:text-blue-400"
+                className={adminButtonStyle}
               >
                 Admin
               </button>
@@ -113,7 +108,7 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* ✅ Modal MUST be inside return */}
+      {/* Admin Login Modal */}
       {showAdminModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 relative">
@@ -138,7 +133,8 @@ function Navbar() {
                 placeholder="Enter admin password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none text-gray-900"
               />
 
               {adminError && (
