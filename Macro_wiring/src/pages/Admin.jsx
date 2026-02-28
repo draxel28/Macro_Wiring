@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar } from "lucide-react"; 
+import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy } from "lucide-react"; 
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,7 +29,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [search, setSearch] = useState("");
-  const [filterDate, setFilterDate] = useState(""); // NEW: Date Filter State
+  const [filterDate, setFilterDate] = useState(""); 
   const [activeTab, setActiveTab] = useState("Dashboard");
 
   // --- REFS FOR SCROLLING ---
@@ -97,6 +97,11 @@ export default function Admin() {
   };
 
   /* ---------------- ACTIONS ---------------- */
+  const copyToClipboard = (text, e) => {
+    e.stopPropagation(); 
+    navigator.clipboard.writeText(text);
+  };
+
   const handleDelete = async (id, e) => {
     e.stopPropagation();
     if (!window.confirm("Delete this submission?")) return;
@@ -128,14 +133,18 @@ export default function Admin() {
   };
 
   /* ---------------- LOGIC ---------------- */
-  // UPDATED: Combined Search and Date Filtering
   const filteredSubmissions = submissions.filter((item) => {
-    const matchesSearch = 
-      item.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      item.email?.toLowerCase().includes(search.toLowerCase()) ||
-      item.subject?.toLowerCase().includes(search.toLowerCase());
+    const searchTerm = search.toLowerCase();
     
-    // Normalize date to YYYY-MM-DD for comparison
+    // Logic to match the Reference ID (first 8 chars) as shown in the UI
+    const refId = item.id.slice(0, 8).toLowerCase();
+
+    const matchesSearch = 
+      item.full_name?.toLowerCase().includes(searchTerm) ||
+      item.email?.toLowerCase().includes(searchTerm) ||
+      item.subject?.toLowerCase().includes(searchTerm) ||
+      refId.includes(searchTerm); // ADDED: Search by Ref ID
+    
     const itemDate = new Date(item.created_at).toISOString().split('T')[0];
     const matchesDate = filterDate === "" || itemDate === filterDate;
 
@@ -254,7 +263,7 @@ export default function Admin() {
           </div>
         </section>
 
-        {/* INBOX SECTION - Responsive Outlook Style with Date Filter */}
+        {/* INBOX SECTION */}
         <section ref={inboxRef} className="space-y-6 pt-10 border-t border-slate-200 scroll-mt-24">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-2">
             <div>
@@ -264,7 +273,7 @@ export default function Admin() {
             <div className="relative w-full md:max-w-md">
               <input
                 type="text"
-                placeholder="Search in all folders..."
+                placeholder="Search by Name, Email, or Ref ID..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-white border border-slate-300 rounded-lg pl-4 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all shadow-sm"
@@ -279,7 +288,6 @@ export default function Admin() {
                 <span className="text-blue-600 border-b-2 border-blue-600 pb-1 cursor-pointer">All Email</span>
               </div>
               
-              {/* UPDATED: Functional Date Filter in Toolbar */}
               <div className="ml-auto flex items-center gap-3">
                 <span className="text-xs font-semibold normal-case text-slate-500 flex items-center gap-1">
                   <Calendar size={14} className="opacity-60" /> Filter by Date:
@@ -331,15 +339,28 @@ export default function Admin() {
                     {/* Message Body */}
                     <div className="flex-1 min-w-0 pt-0.5">
                       <div className="flex justify-between items-start mb-1">
-                        <h4 className={`text-sm md:text-base truncate ${item.status === "unread" ? "font-black text-slate-900" : "font-bold text-slate-700"}`}>
-                          {item.full_name}
-                        </h4>
+                        <div className="flex items-center gap-3 truncate mr-2">
+                          <h4 className={`text-sm md:text-base truncate ${item.status === "unread" ? "font-black text-slate-900" : "font-bold text-slate-700"}`}>
+                            {item.full_name}
+                          </h4>
+                          
+                          {/* Reference ID */}
+                          <div className="flex items-center gap-1 group/ref relative">
+                            <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase shrink-0 mt-0.5">
+                              REF: #{item.id.slice(0, 8).toUpperCase()}
+                            </span>
+                            <button
+                              onClick={(e) => copyToClipboard(`#${item.id.slice(0, 8).toUpperCase()}`, e)}
+                              className="opacity-0 group-hover/ref:opacity-100 p-1 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all duration-200"
+                              title="Copy Reference ID"
+                            >
+                              <circle><Copy size={12} /></circle>
+                            </button>
+                          </div>
+                        </div>
                         
-                        {/* --- RESPONSIVE TIME DISPLAY --- */}
-                        <div className="text-right flex flex-col items-end min-w-[70px] md:min-w-[100px]">
-                          <span className={`tabular-nums tracking-tight font-black 
-                            text-xs md:text-lg 
-                            ${item.status === "unread" ? "text-blue-600" : "text-slate-600"}`}>
+                        <div className="text-right flex flex-col items-end min-w-[70px] md:min-w-[100px] shrink-0">
+                          <span className={`tabular-nums tracking-tight font-black text-xs md:text-lg ${item.status === "unread" ? "text-blue-600" : "text-slate-600"}`}>
                             {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                           </span>
                           <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
@@ -357,7 +378,6 @@ export default function Admin() {
                       </p>
                     </div>
 
-                    {/* Action Side-Menu (Hover) */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity self-center pr-2">
                       <button
                         onClick={(e) => handleDelete(item.id, e)}
@@ -372,42 +392,92 @@ export default function Admin() {
             </div>
           </div>
         </section>
-
       </main>
-
-      {/* GLASSMORPHISM SCROLL TO TOP BUTTON */}
-      <button
-        onClick={scrollToTop}
-        className={`fixed z-50 p-4 
-          bg-white/20 backdrop-blur-md text-gray-800 
-          rounded-full shadow-xl border border-white/40
-          transition-all duration-500 
-          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
-          active:scale-95 flex items-center justify-center 
-          bottom-8 right-24
-          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="w-6 h-6" />
-      </button>
 
       {/* MODAL VIEW */}
       {selectedInquiry && (
-        <div className="fixed inset-0 bg-slate-900/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-xl p-8 rounded-[2rem] shadow-2xl space-y-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-bold text-2xl text-slate-900">{selectedInquiry.full_name}</h3>
-                <p className="text-blue-600 font-medium">{selectedInquiry.email}</p>
+        <div className="fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white">
+            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600" />
+            <div className="p-10 pb-6 flex justify-between items-start">
+              <div className="flex gap-6">
+                <div className="h-20 w-20 rounded-[1.8rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-black text-3xl shadow-2xl shadow-blue-200 shrink-0">
+                  {selectedInquiry.full_name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-widest rounded-md border border-blue-100">
+                      Customer Inquiry
+                    </span>
+                    <span className="text-slate-300 text-[11px] font-bold tracking-widest uppercase">
+                      REF: #{selectedInquiry.id.slice(0, 8).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-3xl font-black text-slate-900 leading-none">
+                      {selectedInquiry.full_name}
+                    </h3>
+                  </div>
+                  <p className="text-blue-600 text-sm font-bold flex items-center gap-2">
+                    <Mail size={14} /> {selectedInquiry.email}
+                  </p>
+                </div>
               </div>
-              <button onClick={() => setSelectedInquiry(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button 
+                onClick={() => setSelectedInquiry(null)} 
+                className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
+              >
+                <X size={28} />
+              </button>
             </div>
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 text-slate-700 italic">
-              "{selectedInquiry.message}"
+
+            <div className="px-10 py-4 space-y-8">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject</p>
+                  <p className="text-sm font-black text-slate-700 uppercase">{selectedInquiry.subject || "No Subject"}</p>
+                </div>
+                <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Received On</p>
+                  <p className="text-sm font-black text-slate-700">
+                    {new Date(selectedInquiry.created_at).toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]" /> 
+                  Inquiry Message
+                </p>
+                <div className="relative p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] shadow-inner h-[250px] overflow-y-auto custom-scrollbar">
+                  <Quote className="absolute right-4 top-4 w-24 h-24 text-slate-100/50 -rotate-12 pointer-events-none" />
+                  <span className="relative z-10 italic whitespace-pre-line font-medium leading-relaxed block text-slate-700 text-base">
+                    "{selectedInquiry.message}"
+                  </span>
+                </div>
+              </div>
             </div>
-            <a href={`mailto:${selectedInquiry.email}`} className="block w-full bg-slate-900 text-white text-center py-4 rounded-2xl font-bold">
-              Reply via Email
-            </a>
+
+            <div className="p-10 pt-4 flex items-center gap-5">
+              <button 
+                onClick={() => setSelectedInquiry(null)}
+                className="flex-1 py-5 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest"
+              >
+                Dismiss
+              </button>
+              <a 
+                href={`mailto:${selectedInquiry.email}`}
+                className="flex-[2] py-5 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-2xl shadow-slate-200 hover:shadow-blue-200 uppercase tracking-widest group"
+              >
+                <Mail size={20} className="group-hover:animate-pulse" />
+                Reply via Email
+              </a>
+            </div>
           </div>
         </div>
       )}
