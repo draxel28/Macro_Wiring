@@ -11,7 +11,7 @@ import sapProcessFlow from "../assets/components/process/sap-flow.jpg";
 import { 
   Target, Globe, Users, ShieldCheck, Factory, 
   Zap, BarChart3, Star, HeartPulse, 
-  ChevronRight, Settings, Leaf, ArrowUp 
+  ChevronRight, Settings, Leaf, ArrowUp, X 
 } from "lucide-react";
 
 import "../App.css"; 
@@ -20,18 +20,19 @@ const AboutUs = () => {
   // --- SCROLL TO TOP STATES ---
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  
+  // --- NEW: POPUP STATE ---
+  const [isZoomed, setIsZoomed] = useState(false);
 
   // Monitor scroll position
   useEffect(() => {
     const handleScroll = () => {
-      // Show/Hide logic (show after 400px)
       if (window.scrollY > 400) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
       }
 
-      // Overlap prevention logic (adjust 120 based on footer height)
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
       const scrolled = window.scrollY;
@@ -56,6 +57,24 @@ const AboutUs = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans relative">
+      
+      {/* --- NEW: IMAGE POPUP MODAL --- */}
+      {isZoomed && (
+        <div 
+          className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+          onClick={() => setIsZoomed(false)}
+        >
+          <button className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform">
+            <X size={40} />
+          </button>
+          <img 
+            src={sapProcessFlow} 
+            alt="SAP Process Flow Full" 
+            className="max-w-full max-h-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
+          />
+        </div>
+      )}
+
       {/* --- TECH HEADER --- */}
       <div className="tech-header-container text-white py-16 px-6 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 pointer-events-none">
@@ -191,6 +210,22 @@ const AboutUs = () => {
           </div>
         </section>
 
+
+        {/* GROUP OF COMPANIES */}
+        <section className="py-12 border-t border-gray-100">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 uppercase">The Macro Group of Companies</h2>
+            <div className="h-1 w-12 bg-blue-600 mx-auto mt-4 mb-4"></div>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 opacity-60 hover:opacity-100 transition-opacity">
+            <img src={goldrichLogo} alt="Goldrich" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
+            <img src={megaLogo} alt="Mega Packaging" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
+            <img src={macroLpgLogo} alt="Macro LPG" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
+            <img src={macroIndustrialLogo} alt="Macro Industrial" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
+            <img src={acreLogo} alt="Acre" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
+          </div>
+        </section>
+
         {/* SAP OPERATIONAL FLOW SECTION */}
         <section className="space-y-8">
           <div className="text-center">
@@ -199,8 +234,14 @@ const AboutUs = () => {
           </div>
           <div className="bg-white p-4 md:p-8 rounded-[2.5rem] shadow-xl border border-gray-100">
             <div className="grid lg:grid-cols-3 gap-12 items-center">
-              <div className="lg:col-span-2 group overflow-hidden rounded-2xl">
-                <img src={sapProcessFlow} alt="SAP Process Flow" className="w-full h-auto transition-transform duration-700 group-hover:scale-105" />
+              <div className="lg:col-span-2 group overflow-hidden rounded-2xl cursor-zoom-in" 
+                   onClick={() => setIsZoomed(true)}>
+                {/* --- IMAGE IS NOW CLICKABLE TO ZOOM --- */}
+                <img 
+                  src={sapProcessFlow} 
+                  alt="SAP Process Flow" 
+                  className="w-full h-auto transition-transform duration-700 group-hover:scale-105" 
+                />
               </div>
               <div className="space-y-6">
                 <h4 className="text-xl font-bold text-blue-600 border-b pb-2">Digital Workflow</h4>
@@ -229,7 +270,7 @@ const AboutUs = () => {
           <div className="absolute top-0 right-0 p-8 opacity-5 text-blue-600"><ShieldCheck size={250} /></div>
           <div className="relative z-10 max-w-4xl mb-12">
             <div className="flex items-center gap-3 text-blue-600 font-black uppercase text-xs tracking-[0.3em] mb-4">
-               <ShieldCheck size={18} /> Integrated Management System
+                <ShieldCheck size={18} /> Integrated Management System
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6 uppercase">IMS Policy</h2>
             <p className="text-gray-600 leading-relaxed border-l-4 border-blue-600 pl-6 text-lg italic">
@@ -317,7 +358,7 @@ const AboutUs = () => {
               <div className="bg-red-500/10 text-red-400 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest w-fit mb-6 border border-red-500/20">
                 Safety First Culture
               </div>
-              <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight">Health & Safety Policy</h2>
+              <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight">Occupational Health & Safety Policy</h2>
               <p className="text-gray-400 leading-relaxed mb-8 text-lg">
                 Macro Wiring Technologies Co. Inc. is committed to providing a safe and healthy workplace for all employees, contractors, and visitors within our manufacturing facilities.
               </p>
@@ -342,20 +383,6 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* GROUP OF COMPANIES */}
-        <section className="py-12 border-t border-gray-100">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 uppercase">The Macro Group of Companies</h2>
-            <div className="h-1 w-12 bg-blue-600 mx-auto mt-4 mb-4"></div>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 opacity-60 hover:opacity-100 transition-opacity">
-            <img src={goldrichLogo} alt="Goldrich" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
-            <img src={megaLogo} alt="Mega Packaging" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
-            <img src={macroLpgLogo} alt="Macro LPG" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
-            <img src={macroIndustrialLogo} alt="Macro Industrial" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
-            <img src={acreLogo} alt="Acre" className="h-14 w-auto grayscale hover:grayscale-0 transition-all" />
-          </div>
-        </section>
 
       </div>
 
