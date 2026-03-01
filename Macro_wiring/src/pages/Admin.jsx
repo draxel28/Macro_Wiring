@@ -25,6 +25,27 @@ ChartJS.register(
   Filler
 );
 
+// --- NEW HIGHLIGHT COMPONENT ---
+const HighlightText = ({ text, highlight }) => {
+  if (!highlight.trim()) return <span>{text}</span>;
+  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <span>
+      {parts.map((part, i) => 
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-200 text-slate-900 rounded-sm px-0.5 font-bold">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 export default function Admin() {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
@@ -321,9 +342,14 @@ export default function Admin() {
                     <div className="flex-1 min-w-0 pt-0.5">
                       <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-3 truncate mr-2">
-                          <h4 className={`text-sm md:text-base truncate ${item.status === "unread" ? "font-black text-slate-900" : "font-bold text-slate-700"}`}>{item.full_name}</h4>
+                          <h4 className={`text-sm md:text-base truncate ${item.status === "unread" ? "font-black text-slate-900" : "font-bold text-slate-700"}`}>
+                            {/* HIGHLIGHTED NAME */}
+                            <HighlightText text={item.full_name} highlight={search} />
+                          </h4>
                           <div className="flex items-center gap-1 group/ref relative">
-                            <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase shrink-0 mt-0.5">REF: #{item.id.slice(0, 8).toUpperCase()}</span>
+                            <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase shrink-0 mt-0.5">
+                              REF: #<HighlightText text={item.id.slice(0, 8).toUpperCase()} highlight={search} />
+                            </span>
                             <button onClick={(e) => copyToClipboard(`#${item.id.slice(0, 8).toUpperCase()}`, e)} className="opacity-0 group-hover/ref:opacity-100 p-1 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all duration-200" title="Copy Reference ID"><Copy size={12} /></button>
                           </div>
                         </div>
@@ -332,7 +358,10 @@ export default function Admin() {
                           <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(item.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                         </div>
                       </div>
-                      <div className={`text-xs md:text-sm mb-1 truncate ${item.status === "unread" ? "text-slate-900 font-extrabold" : "text-blue-600 font-semibold"}`}>{item.subject}</div>
+                      <div className={`text-xs md:text-sm mb-1 truncate ${item.status === "unread" ? "text-slate-900 font-extrabold" : "text-blue-600 font-semibold"}`}>
+                        {/* HIGHLIGHTED SUBJECT */}
+                        <HighlightText text={item.subject || "No Subject"} highlight={search} />
+                      </div>
                       <p className="text-xs md:text-sm text-slate-500 truncate leading-relaxed line-clamp-1 opacity-90">{item.message}</p>
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity self-center pr-2">
@@ -359,10 +388,12 @@ export default function Admin() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-md border border-blue-100">Customer Inquiry</span>
-                    <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase">REF: #{selectedInquiry.id.slice(0, 8).toUpperCase()}</span>
+                    <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase">REF: #<HighlightText text={selectedInquiry.id.slice(0, 8).toUpperCase()} highlight={search} /></span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-1 truncate">{selectedInquiry.full_name}</h3>
-                  <p className="text-blue-600 text-xs md:text-sm font-bold flex items-center gap-2 truncate"><Mail size={14} /> {selectedInquiry.email}</p>
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-1 truncate">
+                    <HighlightText text={selectedInquiry.full_name} highlight={search} />
+                  </h3>
+                  <p className="text-blue-600 text-xs md:text-sm font-bold flex items-center gap-2 truncate"><Mail size={14} /> <HighlightText text={selectedInquiry.email} highlight={search} /></p>
                 </div>
               </div>
               <button onClick={() => setSelectedInquiry(null)} className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all flex-shrink-0"><X size={28} /></button>
@@ -376,7 +407,9 @@ export default function Admin() {
                 </div>         
                 <div className="p-4 md:p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject</p>
-                  <p className="text-sm font-black text-slate-700 uppercase break-words">{selectedInquiry.subject || "No Subject"}</p>
+                  <p className="text-sm font-black text-slate-700 uppercase break-words">
+                    <HighlightText text={selectedInquiry.subject || "No Subject"} highlight={search} />
+                  </p>
                 </div>
               </div>
               
