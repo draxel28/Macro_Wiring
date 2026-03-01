@@ -184,44 +184,62 @@ const Products = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
-          {/* Sidebar Filter */}
-          <div className="md:col-span-1">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <Search className="w-5 h-5 text-blue-600" /> Filter
-              </h2>
-              <div className="mb-8">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">
-                  Categories
-                </h3>
-                {categories.map((category, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center space-x-3 cursor-pointer group"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => handleCategoryChange(category)}
-                      className="w-4 h-4 accent-blue-600 rounded"
-                    />
-                    <span className="text-gray-700 group-hover:text-blue-600 transition text-sm">
-                      {category}
-                    </span>
-                  </label>
-                ))}
-              </div>
+{/* Sidebar Filter */}
+<div className="md:col-span-1">
+  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
+    <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+      <Search className="w-5 h-5 text-blue-600" /> Filter
+    </h2>
+    <div className="mb-8">
+      <input
+        type="text"
+        placeholder="Search products..."
+        className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+    </div>
+    <div className="space-y-3">
+      <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">
+        Categories
+      </h3>
+      {productData.map((cat, index) => {
+        const isChecked = selectedCategories.includes(cat.category);
+        return (
+          <label
+            key={index}
+            className={`flex items-center justify-between p-2 rounded-lg cursor-pointer group transition-all duration-300 ${
+              isChecked ? "bg-blue-50/50" : "hover:bg-gray-50"
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={() => handleCategoryChange(cat.category)}
+                className="w-4 h-4 accent-blue-600 rounded cursor-pointer"
+              />
+              <span className={`transition-colors duration-300 text-sm ${
+                isChecked ? "text-blue-700 font-semibold" : "text-gray-700 group-hover:text-blue-600"
+              }`}>
+                {cat.category}
+              </span>
             </div>
-          </div>
+            
+            {/* Tech-styled Count Badge */}
+            <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 border ${
+              isChecked 
+              ? "bg-blue-600 text-white border-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.5)]" 
+              : "bg-gray-100 text-gray-500 border-gray-200 group-hover:border-blue-200"
+            }`}>
+              {cat.items.length.toString().padStart(2, '0')}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  </div>
+</div>
 
           {/* Product Grid */}
           <div className="md:col-span-3">
