@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Lock, ShieldCheck, Scale, FileText, CheckCircle2, ChevronRight } from "lucide-react";
+import { Lock, ShieldCheck, Scale, CheckCircle2, ChevronRight } from "lucide-react";
 
 // Memoized checkbox for stable rendering with larger text
 const AgreementCheckbox = React.memo(({ checked, onChange, label }) => (
@@ -56,22 +56,22 @@ const CookieConsent = () => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/95 backdrop-blur-2xl transition-all duration-1000 p-4">
       
       {!isWelcoming ? (
-        /* --- HIGH READABILITY CONSENT CARD --- */
-        <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
+        /* --- RESPONSIVE OPTIMIZED CONSENT CARD --- */
+        <div className="bg-white w-full max-w-xl md:max-w-2xl rounded-[2.5rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
           
-          {/* Header Section */}
-          <div className="p-10 pb-6 flex flex-col items-center text-center">
-            <div className="bg-blue-600 text-white p-5 rounded-2xl mb-6 shadow-xl shadow-blue-200">
-              <Lock size={36} />
+          {/* Header Section - Scaled for screen height */}
+          <div className="p-6 md:p-10 pb-4 md:pb-6 flex flex-col items-center text-center">
+            <div className="bg-blue-600 text-white p-4 md:p-5 rounded-2xl mb-4 md:mb-6 shadow-xl shadow-blue-200">
+              <Lock size={30} className="md:w-9 md:h-9" />
             </div>
-            <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Legal Compliance</h2>
-            <p className="text-[14px] text-gray-500 leading-relaxed max-w-lg">
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2 tracking-tight">Legal Compliance</h2>
+            <p className="text-[13px] md:text-[14px] text-gray-500 leading-relaxed max-w-lg">
               In compliance with the <b>Philippine Data Privacy Act of 2012 (RA 10173)</b>, Macro Wiring Technologies Co. Inc. ensures all personal data is handled securely.
             </p>
           </div>
 
-          {/* Expanded Legal Content Area */}
-          <div className="mx-6 md:mx-10 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 space-y-8 max-h-[45vh] overflow-y-auto custom-scrollbar shadow-inner">
+          {/* Legal Content Area - Kept 100% of original content */}
+          <div className="mx-4 md:mx-10 p-6 md:p-8 bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 space-y-8 max-h-[35vh] md:max-h-[45vh] overflow-y-auto custom-scrollbar shadow-inner">
             
             {/* Privacy Policy Section */}
             <section className="space-y-4">
@@ -123,7 +123,7 @@ const CookieConsent = () => {
           </div>
 
           {/* Action Area */}
-          <div className="p-10 pt-8 space-y-6">
+          <div className="p-6 md:p-10 pt-6 md:pt-8 space-y-6">
             <AgreementCheckbox 
               checked={hasAgreedMain}
               onChange={() => setHasAgreedMain(!hasAgreedMain)}
@@ -133,7 +133,7 @@ const CookieConsent = () => {
             <button 
               disabled={!hasAgreedMain}
               onClick={handleAcceptMain}
-              className={`w-full font-black py-5 rounded-2xl transition-all uppercase tracking-widest text-sm shadow-2xl active:scale-95 ${
+              className={`w-full font-black py-4 md:py-5 rounded-2xl transition-all uppercase tracking-widest text-xs md:text-sm shadow-2xl active:scale-95 ${
                 hasAgreedMain 
                 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-100 cursor-pointer' 
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
@@ -153,7 +153,7 @@ const CookieConsent = () => {
             <h1 className="text-white text-4xl md:text-7xl font-black tracking-tighter leading-none animate-text-zoom-pass">
               MACRO WIRING <br />
               <span className="text-blue-500">TECHNOLOGIES</span> <br />
-              <span className="text-2xl md:text-4xl font-light tracking-[0.3em] text-gray-400">COMPANY INC.</span>
+              <span className="text-2xl md:text-4xl font-light tracking-[0.3em] text-gray-400 uppercase">COMPANY INC.</span>
             </h1>
             <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full animate-glow-pulse -z-10" />
           </div>
@@ -163,9 +163,9 @@ const CookieConsent = () => {
       <style>{`
         .transform-gpu { transform: translateZ(0); backface-visibility: hidden; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
         
         @keyframes welcomeText { 
           0% { opacity: 0; transform: translateY(20px); } 
@@ -185,7 +185,7 @@ const CookieConsent = () => {
         .animate-text-zoom-pass { animation: textZoomPass 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .animate-glow-pulse { animation: glowPulse 3.2s ease-out forwards; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}</style>
     </div>
