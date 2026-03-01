@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy, ChevronDown, CheckSquare, Square, RefreshCcw, AlertTriangle } from "lucide-react"; 
+import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy, ChevronDown, CheckSquare, Square, RefreshCcw, AlertTriangle, ShieldCheck } from "lucide-react"; 
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -64,7 +64,7 @@ export default function Admin() {
 
   const dashboardRef = useRef(null);
   const inboxRef = useRef(null);
-  const dateInputRef = useRef(null); // Ref to trigger date picker via icon
+  const dateInputRef = useRef(null); 
 
   useEffect(() => {
     const isAuthorized = sessionStorage.getItem("admin_access");
@@ -81,7 +81,8 @@ export default function Admin() {
       .select("*")
       .order("created_at", { ascending: false });
     if (!error) setSubmissions(data || []);
-    setLoading(false);
+    // Slight delay to make the transition feel smoother
+    setTimeout(() => setLoading(false), 1500);
   };
 
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -267,6 +268,36 @@ export default function Admin() {
     navigate("/");
   };
 
+  // --- LOADING SCREEN COMPONENT ---
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center relative overflow-hidden">
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes reverse-spin { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+          .animate-reverse-spin { animation: reverse-spin 3s linear infinite; }
+        `}} />
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400 rounded-full blur-[120px] animate-pulse delay-700"></div>
+        </div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative w-24 h-24 mb-8">
+            <div className="absolute inset-0 border-4 border-blue-100 rounded-2xl"></div>
+            <div className="absolute inset-0 border-4 border-blue-600 rounded-2xl animate-spin [animation-duration:3s] border-t-transparent shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+            <div className="absolute inset-4 border-2 border-slate-200 rounded-xl animate-reverse-spin border-b-transparent"></div>
+            <ShieldCheck className="absolute inset-0 m-auto text-blue-600 animate-pulse" size={32} />
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-black text-slate-800 tracking-tighter uppercase flex items-center gap-2">
+              Syncing <span className="text-blue-600">Admin Portal</span>
+            </h2>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] animate-pulse">Establishing Secure Connection...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 relative">
       <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4 p-3 bg-white/40 backdrop-blur-md border border-white/40 rounded-3xl shadow-2xl transition-all duration-300 hover:opacity-100 opacity-60 hover:bg-white/80">
@@ -389,14 +420,12 @@ export default function Admin() {
                   <span className="hidden md:inline">Filter by Date:</span>
                   <span className="inline md:hidden">Filter:</span>
                   
-                  {/* Calendar Icon wrapper for mobile and desktop */}
                   <div className="relative flex items-center">
                     <Calendar 
                         size={16} 
                         className={`cursor-pointer transition-colors ${filterDate ? 'text-blue-600' : 'text-slate-400 hover:text-blue-600'}`}
-                        onClick={() => dateInputRef.current?.showPicker()} // Programmatically open the date picker
+                        onClick={() => dateInputRef.current?.showPicker()} 
                     />
-                    {/* Hidden on mobile view but provides the functional input */}
                     <input 
                         ref={dateInputRef}
                         type="date" 
@@ -414,7 +443,7 @@ export default function Admin() {
               <div className="bg-slate-50/90 px-6 py-2.5 text-[10px] font-black text-blue-700 uppercase tracking-widest sticky top-0 z-10 backdrop-blur-md border-b border-slate-200">
                 {inboxView === 'trash' ? "Trash Bin - Items here are soft-deleted" : filterDate ? `Records for ${new Date(filterDate).toLocaleDateString()}` : "Recent Communications"}
               </div>
-              {loading ? ( <div className="p-20 text-center text-slate-400 font-medium italic">Syncing with server...</div> ) : filteredSubmissions.length === 0 ? ( <div className="p-20 text-center text-slate-400 font-medium italic">No results found for this selection.</div> ) : (
+              {filteredSubmissions.length === 0 ? ( <div className="p-20 text-center text-slate-400 font-medium italic">No results found for this selection.</div> ) : (
                 filteredSubmissions.map((item) => (
                   <div key={item.id} onClick={() => handleOpenMessage(item)} className={`flex items-start gap-3 md:gap-5 p-4 md:p-5 cursor-pointer transition-all border-l-4 group ${item.status === "unread" ? "border-blue-600 bg-blue-50/20" : "border-transparent hover:bg-slate-50"} ${selectedIds.includes(item.id) ? "bg-blue-50/40" : ""} ${item.status === 'deleted' ? 'opacity-75' : ''}`}>
                     <div className="pt-2">
@@ -474,7 +503,7 @@ export default function Admin() {
                   {selectedInquiry.full_name?.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <div className="flex wrap items-center gap-2 mb-2">
                     <span className={`px-3 py-1 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-md border ${selectedInquiry.status === 'deleted' ? 'bg-red-50 text-red-700 border-red-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>
                         {selectedInquiry.status === 'deleted' ? 'Deleted Inquiry' : 'Customer Inquiry'}
                     </span>
