@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy } from "lucide-react"; 
+import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy, ChevronDown } from "lucide-react"; 
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,8 +34,11 @@ export default function Admin() {
   const [filterDate, setFilterDate] = useState(""); 
   const [activeTab, setActiveTab] = useState("Dashboard");
   
-  // --- UPDATED: Dynamic Number State ---
+  // States for dynamic filtering
   const [timeRange, setTimeRange] = useState(7);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [chartMode, setChartMode] = useState("month"); 
 
   const dashboardRef = useRef(null);
   const inboxRef = useRef(null);
@@ -71,6 +74,112 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  // Card Logic: Always shows data for the currently selected month
+  const filteredByMonth = useMemo(() => {
+    return submissions.filter(item => {
+      const date = new Date(item.created_at);
+      return date.getMonth() === selectedMonth && date.getFullYear() === selectedYear;
+    });
+  }, [submissions, selectedMonth, selectedYear]);
+
+  // Chart Logic: Switches between specific Month view or Rolling Day range
+  const chartConfig = useMemo(() => {
+    let labels = [];
+    let dataPoints = [];
+
+    if (chartMode === "month") {
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+      for (let i = 1; i <= daysInMonth; i++) {
+        labels.push(`${months[selectedMonth].slice(0, 3)} ${i}`);
+        const count = submissions.filter(item => {
+          const d = new Date(item.created_at);
+          return d.getDate() === i && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+        }).length;
+        dataPoints.push(count);
+      }
+    } else {
+      for (let i = timeRange - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        labels.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+        const count = submissions.filter(item => {
+          const itemDate = new Date(item.created_at);
+          return itemDate.toDateString() === d.toDateString();
+        }).length;
+        dataPoints.push(count);
+      }
+    }
+    return { labels, dataPoints };
+  }, [submissions, selectedMonth, selectedYear, timeRange, chartMode]);
+
+  const chartData = {
+    labels: chartConfig.labels,
+    datasets: [
+      {
+        label: "Messages",
+        data: chartConfig.dataPoints,
+        borderColor: "#2563eb",
+        borderWidth: 3,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: "#2563eb",
+        pointBorderWidth: 2,
+        pointRadius: chartMode === "month" ? 2 : 4,
+        tension: 0.4,
+        fill: true,
+        backgroundColor: (context) => {
+          const ctx = context.chart.ctx;
+          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+          gradient.addColorStop(0, "rgba(37, 99, 235, 0.2)");
+          gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
+          return gradient;
+        },
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1e293b",
+        padding: 12,
+        cornerRadius: 8,
+        displayColors: false,
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { 
+          color: "#94a3b8", 
+          font: { size: 10 }, 
+          maxRotation: 45, 
+          minRotation: 45,
+          autoSkip: true,
+          maxTicksLimit: 15 
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: "rgba(226, 232, 240, 0.5)", drawBorder: false },
+        ticks: { color: "#94a3b8", font: { size: 11 }, stepSize: 1, precision: 0 }
+      }
+    }
+  };
+
+  const filteredSubmissions = submissions.filter((item) => {
+    const searchTerm = search.toLowerCase();
+    const refId = item.id.slice(0, 8).toLowerCase();
+    const matchesSearch = item.full_name?.toLowerCase().includes(searchTerm) || item.email?.toLowerCase().includes(searchTerm) || item.subject?.toLowerCase().includes(searchTerm) || refId.includes(searchTerm);
+    const itemDate = new Date(item.created_at).toISOString().split('T')[0];
+    const matchesDate = filterDate === "" || itemDate === filterDate;
+    return matchesSearch && matchesDate;
+  });
+
   const scrollToSection = (tab) => {
     setActiveTab(tab);
     if (tab === "Dashboard") window.scrollTo({ top: 0, behavior: "smooth" });
@@ -102,98 +211,6 @@ export default function Admin() {
     navigate("/");
   };
 
-  const filteredSubmissions = submissions.filter((item) => {
-    const searchTerm = search.toLowerCase();
-    const refId = item.id.slice(0, 8).toLowerCase();
-    const matchesSearch = item.full_name?.toLowerCase().includes(searchTerm) || item.email?.toLowerCase().includes(searchTerm) || item.subject?.toLowerCase().includes(searchTerm) || refId.includes(searchTerm);
-    const itemDate = new Date(item.created_at).toISOString().split('T')[0];
-    const matchesDate = filterDate === "" || itemDate === filterDate;
-    return matchesSearch && matchesDate;
-  });
-
-  const totalMessages = submissions.length;
-  const unreadMessages = submissions.filter((item) => item.status === "unread").length;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const todayMessages = submissions.filter((item) => {
-    const created = new Date(item.created_at);
-    created.setHours(0, 0, 0, 0);
-    return created.getTime() === today.getTime();
-  }).length;
-
-  const monthMessages = submissions.filter((item) => new Date(item.created_at) >= new Date(today.getFullYear(), today.getMonth(), 1)).length;
-
-  // --- DYNAMIC TIME CALCULATION ---
-  const timeRangeLabels = Array.from({ length: Math.max(1, timeRange) }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (timeRange - 1 - i));
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
-
-  const chartData = {
-    labels: timeRangeLabels.map((d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" })),
-    datasets: [
-      {
-        label: "Messages",
-        data: timeRangeLabels.map(day => submissions.filter(item => {
-          const created = new Date(item.created_at);
-          created.setHours(0, 0, 0, 0);
-          return created.getTime() === day.getTime();
-        }).length),
-        borderColor: "#2563eb",
-        borderWidth: 3,
-        pointBackgroundColor: "#ffffff",
-        pointBorderColor: "#2563eb",
-        pointBorderWidth: 2,
-        pointRadius: timeRange > 20 ? 0 : 4, // Hide points if range is too crowded
-        tension: 0.4,
-        fill: true,
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, "rgba(37, 99, 235, 0.2)");
-          gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
-          return gradient;
-        },
-      },
-    ],
-  };
-
-const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: "#1e293b",
-        padding: 12,
-        cornerRadius: 8,
-        displayColors: false,
-      }
-    },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { 
-          color: "#94a3b8", 
-          font: { size: 10 }, 
-          maxRotation: 45, 
-          minRotation: 45,
-          // --- NEW: Prevents overcrowding ---
-          autoSkip: true,
-          maxTicksLimit: 15 // Limits the number of visible dates regardless of range
-        }
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: "rgba(226, 232, 240, 0.5)", drawBorder: false },
-        ticks: { color: "#94a3b8", font: { size: 11 }, stepSize: 1, precision: 0 }
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 relative">
       <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4 p-3 bg-white/40 backdrop-blur-md border border-white/40 rounded-3xl shadow-2xl transition-all duration-300 hover:opacity-100 opacity-60 hover:bg-white/80">
@@ -212,18 +229,34 @@ const chartOptions = {
               <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Contact Management</h1>
               <p className="text-sm text-slate-500 mt-1 uppercase tracking-wider font-semibold opacity-70">Operational Overview & Portal Analytics</p>
             </div>
-            <button onClick={handleLogout} className="px-6 py-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-all border border-red-100 shadow-sm">Logout</button>
+            
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <select 
+                  value={selectedMonth} 
+                  onChange={(e) => {
+                    setSelectedMonth(parseInt(e.target.value));
+                    setChartMode("month");
+                  }}
+                  className="appearance-none bg-slate-100 border border-slate-200 text-sm font-bold text-slate-700 py-2 pl-4 pr-10 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+                >
+                  {months.map((month, index) => <option key={month} value={index}>{month}</option>)}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              </div>
+              <button onClick={handleLogout} className="px-6 py-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-all border border-red-100 shadow-sm">Logout</button>
+            </div>
           </div>
         </div>
       </div>
 
       <main className="flex-1 max-w-[1600px] mx-auto w-full p-4 md:p-8 space-y-20">
         <section ref={dashboardRef} className="space-y-8 scroll-mt-24">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <EnterpriseCard title="Total Messages" value={totalMessages} icon="📊" />
-            <EnterpriseCard title="Unread Messages" value={unreadMessages} icon="✉️" />
-            <EnterpriseCard title="Today's Activity" value={todayMessages} icon="⚡" />
-            <EnterpriseCard title="Monthly Total" value={monthMessages} icon="📈" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <EnterpriseCard title={`Total (${months[selectedMonth].slice(0,3)})`} value={filteredByMonth.length} icon="📊" />
+            <EnterpriseCard title="Unread Messages" value={filteredByMonth.filter(i => i.status === "unread").length} icon="✉️" />
+            <EnterpriseCard title="Today's Activity" value={submissions.filter(i => new Date(i.created_at).toDateString() === new Date().toDateString()).length} icon="⚡" />
+            <EnterpriseCard title="Monthly Total" value={filteredByMonth.length} icon="📈" />
           </div>
 
           <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm transition-all hover:shadow-md">
@@ -231,10 +264,9 @@ const chartOptions = {
               <div>
                 <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest flex items-center gap-3">
                   <span className="w-3 h-3 bg-blue-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.4)]"></span>
-                  Message Activity
+                  {chartMode === "month" ? `${months[selectedMonth]} Analytics` : "Rolling Days Analytics"}
                 </h3>
                 
-                {/* --- UPDATED: Editable Number Input --- */}
                 <div className="flex items-center gap-2 ml-6 mt-2">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Last</p>
                   <input 
@@ -242,7 +274,10 @@ const chartOptions = {
                     min="1" 
                     max="365"
                     value={timeRange}
-                    onChange={(e) => setTimeRange(Number(e.target.value))}
+                    onChange={(e) => {
+                      setTimeRange(Number(e.target.value));
+                      setChartMode("days");
+                    }}
                     className="w-12 bg-slate-100 border-none text-[11px] font-black text-blue-600 text-center py-0.5 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                   />
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Days Analytics</p>
@@ -256,7 +291,6 @@ const chartOptions = {
           </div>
         </section>
 
-        {/* INBOX SECTION */}
         <section ref={inboxRef} className="space-y-6 pt-10 border-t border-slate-200 scroll-mt-24">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-2">
             <div>
@@ -312,47 +346,61 @@ const chartOptions = {
         </section>
       </main>
 
-      {/* MODAL VIEW */}
       {selectedInquiry && (
         <div className="fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600" />
-            <div className="p-10 pb-6 flex justify-between items-start">
-              <div className="flex gap-6">
-                <div className="h-20 w-20 rounded-[1.8rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-black text-3xl shadow-2xl shadow-blue-200 shrink-0">{selectedInquiry.full_name?.charAt(0).toUpperCase()}</div>
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-widest rounded-md border border-blue-100">Customer Inquiry</span>
-                    <span className="text-slate-300 text-[11px] font-bold tracking-widest uppercase">REF: #{selectedInquiry.id.slice(0, 8).toUpperCase()}</span>
+          <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white flex flex-col">
+            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600 flex-shrink-0" />
+            
+            <div className="p-8 md:p-10 pb-6 flex justify-between items-start flex-shrink-0">
+              <div className="flex gap-4 md:gap-6">
+                <div className="h-16 w-16 md:h-20 md:w-20 rounded-[1.5rem] md:rounded-[1.8rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-black text-2xl md:text-3xl shadow-2xl shadow-blue-200 shrink-0">
+                  {selectedInquiry.full_name?.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-md border border-blue-100">Customer Inquiry</span>
+                    <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase">REF: #{selectedInquiry.id.slice(0, 8).toUpperCase()}</span>
                   </div>
-                  <h3 className="text-3xl font-black text-slate-900 leading-none mb-2">{selectedInquiry.full_name}</h3>
-                  <p className="text-blue-600 text-sm font-bold flex items-center gap-2"><Mail size={14} /> {selectedInquiry.email}</p>
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-1 truncate">{selectedInquiry.full_name}</h3>
+                  <p className="text-blue-600 text-xs md:text-sm font-bold flex items-center gap-2 truncate"><Mail size={14} /> {selectedInquiry.email}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedInquiry(null)} className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"><X size={28} /></button>
+              <button onClick={() => setSelectedInquiry(null)} className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all flex-shrink-0"><X size={28} /></button>
             </div>
-            <div className="px-10 py-4 space-y-8">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject</p>
-                  <p className="text-sm font-black text-slate-700 uppercase">{selectedInquiry.subject || "No Subject"}</p>
-                </div>
-                <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
+
+            <div className="px-8 md:px-10 py-4 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                 <div className="p-4 md:p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Received On</p>
                   <p className="text-sm font-black text-slate-700">{new Date(selectedInquiry.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                </div>         
+                <div className="p-4 md:p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject</p>
+                  <p className="text-sm font-black text-slate-700 uppercase break-words">{selectedInquiry.subject || "No Subject"}</p>
                 </div>
               </div>
+              
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><span className="w-2 h-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]" /> Inquiry Message</p>
-                <div className="relative p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] shadow-inner h-[250px] overflow-y-auto custom-scrollbar">
-                  <Quote className="absolute right-4 top-4 w-24 h-24 text-slate-100/50 -rotate-12 pointer-events-none" />
-                  <span className="relative z-10 italic whitespace-pre-line font-medium leading-relaxed block text-slate-700 text-base">"{selectedInquiry.message}"</span>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]" /> 
+                  Inquiry Message
+                </p>
+                <div className="relative p-6 md:p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2rem] md:rounded-[2.5rem] shadow-inner">
+                  <Quote className="absolute right-4 top-4 w-16 h-16 md:w-24 md:h-24 text-slate-100/50 -rotate-12 pointer-events-none" />
+                  <span className="relative z-10 italic whitespace-pre-line font-medium leading-relaxed block text-slate-700 text-sm md:text-base break-words">
+                    "{selectedInquiry.message}"
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="p-10 pt-4 flex items-center gap-5">
-              <button onClick={() => setSelectedInquiry(null)} className="flex-1 py-5 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">Dismiss</button>
-              <a href={`mailto:${selectedInquiry.email}`} className="flex-[2] py-5 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-2xl shadow-slate-200 hover:shadow-blue-200 uppercase tracking-widest group"><Mail size={20} className="group-hover:animate-pulse" /> Reply via Email</a>
+
+            <div className="p-8 md:p-10 pt-4 flex flex-col sm:flex-row items-center gap-4 flex-shrink-0 bg-white border-t border-slate-50">
+              <button onClick={() => setSelectedInquiry(null)} className="w-full sm:flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">
+                Dismiss
+              </button>
+              <a href={`mailto:${selectedInquiry.email}`} className="w-full sm:flex-[2] py-4 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-blue-200 uppercase tracking-widest group">
+                <Mail size={20} className="group-hover:animate-pulse" /> Reply via Email
+              </a>
             </div>
           </div>
         </div>
@@ -367,9 +415,9 @@ function EnterpriseCard({ title, value, icon }) {
       <div className="flex justify-between items-start">
         <div>
           <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{title}</p>
-          <h3 className="text-3xl font-bold text-slate-800">{value}</h3>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800">{value}</h3>
         </div>
-        <span className="text-xl opacity-50">{icon}</span>
+        <span className="text-lg md:text-xl opacity-50">{icon}</span>
       </div>
     </div>
   );
