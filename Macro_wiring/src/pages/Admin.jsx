@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy, ChevronDown } from "lucide-react"; 
+import { ArrowUp, LayoutDashboard, Inbox, Settings, Trash2, Calendar, X, Mail, Quote, Copy, ChevronDown, CheckSquare, Square, RefreshCcw, AlertTriangle } from "lucide-react"; 
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,7 +25,6 @@ ChartJS.register(
   Filler
 );
 
-// --- NEW HIGHLIGHT COMPONENT ---
 const HighlightText = ({ text, highlight }) => {
   if (!highlight.trim()) return <span>{text}</span>;
   const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -54,8 +53,10 @@ export default function Admin() {
   const [search, setSearch] = useState("");
   const [filterDate, setFilterDate] = useState(""); 
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [inboxView, setInboxView] = useState("all"); // "all" or "trash"
   
-  // States for dynamic filtering
+  const [selectedIds, setSelectedIds] = useState([]);
+
   const [timeRange, setTimeRange] = useState(7);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -63,8 +64,7 @@ export default function Admin() {
 
   const dashboardRef = useRef(null);
   const inboxRef = useRef(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(false);
+  const dateInputRef = useRef(null); // Ref to trigger date picker via icon
 
   useEffect(() => {
     const isAuthorized = sessionStorage.getItem("admin_access");
@@ -73,17 +73,6 @@ export default function Admin() {
 
   useEffect(() => {
     fetchSubmissions();
-    const handleScroll = () => {
-      if (window.scrollY > 400) setShowScrollTop(true);
-      else setShowScrollTop(false);
-      const windowHeight = window.innerHeight;
-      const fullHeight = document.documentElement.scrollHeight;
-      const scrolled = window.scrollY;
-      if (scrolled + windowHeight > fullHeight - 120) setIsAtBottom(true);
-      else setIsAtBottom(false);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const fetchSubmissions = async () => {
@@ -97,15 +86,13 @@ export default function Admin() {
 
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // Card Logic: Always shows data for the currently selected month
   const filteredByMonth = useMemo(() => {
     return submissions.filter(item => {
       const date = new Date(item.created_at);
-      return date.getMonth() === selectedMonth && date.getFullYear() === selectedYear;
+      return date.getMonth() === selectedMonth && date.getFullYear() === selectedYear && item.status !== 'deleted';
     });
   }, [submissions, selectedMonth, selectedYear]);
 
-  // Chart Logic: Switches between specific Month view or Rolling Day range
   const chartConfig = useMemo(() => {
     let labels = [];
     let dataPoints = [];
@@ -116,7 +103,7 @@ export default function Admin() {
         labels.push(`${months[selectedMonth].slice(0, 3)} ${i}`);
         const count = submissions.filter(item => {
           const d = new Date(item.created_at);
-          return d.getDate() === i && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+          return d.getDate() === i && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear && item.status !== 'deleted';
         }).length;
         dataPoints.push(count);
       }
@@ -127,7 +114,7 @@ export default function Admin() {
         labels.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
         const count = submissions.filter(item => {
           const itemDate = new Date(item.created_at);
-          return itemDate.toDateString() === d.toDateString();
+          return itemDate.toDateString() === d.toDateString() && item.status !== 'deleted';
         }).length;
         dataPoints.push(count);
       }
@@ -175,14 +162,7 @@ export default function Admin() {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { 
-          color: "#94a3b8", 
-          font: { size: 10 }, 
-          maxRotation: 45, 
-          minRotation: 45,
-          autoSkip: true,
-          maxTicksLimit: 15 
-        }
+        ticks: { color: "#94a3b8", font: { size: 10 }, maxRotation: 45, minRotation: 45, autoSkip: true, maxTicksLimit: 15 }
       },
       y: {
         beginAtZero: true,
@@ -193,6 +173,9 @@ export default function Admin() {
   };
 
   const filteredSubmissions = submissions.filter((item) => {
+    if (inboxView === "all" && item.status === "deleted") return false;
+    if (inboxView === "trash" && item.status !== "deleted") return false;
+
     const searchTerm = search.toLowerCase();
     const refId = item.id.slice(0, 8).toLowerCase();
     const matchesSearch = item.full_name?.toLowerCase().includes(searchTerm) || item.email?.toLowerCase().includes(searchTerm) || item.subject?.toLowerCase().includes(searchTerm) || refId.includes(searchTerm);
@@ -201,29 +184,81 @@ export default function Admin() {
     return matchesSearch && matchesDate;
   });
 
+  const toggleSelect = (id, e) => {
+    e.stopPropagation();
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (inboxView === "all") {
+      if (!window.confirm(`Move ${selectedIds.length} selected submissions to Trash?`)) return;
+      const { error } = await supabase.from("contact_submissions").update({ status: 'deleted' }).in("id", selectedIds);
+      if (!error) {
+        setSubmissions(prev => prev.map(item => selectedIds.includes(item.id) ? { ...item, status: 'deleted' } : item));
+        setSelectedIds([]);
+      }
+    } else {
+      if (!window.confirm(`Permanently delete ${selectedIds.length} selected items? This cannot be undone.`)) return;
+      const { error } = await supabase.from("contact_submissions").delete().in("id", selectedIds);
+      if (!error) {
+        setSubmissions(prev => prev.filter(item => !selectedIds.includes(item.id)));
+        setSelectedIds([]);
+      }
+    }
+  };
+
+  const handleBulkRestore = async () => {
+    if (selectedIds.length === 0) return;
+    const { error } = await supabase.from("contact_submissions").update({ status: 'read' }).in("id", selectedIds);
+    if (!error) {
+      setSubmissions(prev => prev.map(item => selectedIds.includes(item.id) ? { ...item, status: 'read' } : item));
+      setSelectedIds([]);
+    }
+  };
+
+  const handleDelete = async (id, e) => {
+    e.stopPropagation();
+    if (inboxView === "all") {
+      if (!window.confirm("Move to Trash?")) return;
+      const { error } = await supabase.from("contact_submissions").update({ status: 'deleted' }).eq("id", id);
+      if (!error) {
+        setSubmissions((prev) => prev.map((item) => item.id === id ? { ...item, status: 'deleted' } : item));
+      }
+    } else {
+      if (!window.confirm("Permanently delete this submission?")) return;
+      const { error } = await supabase.from("contact_submissions").delete().eq("id", id);
+      if (!error) {
+        setSubmissions((prev) => prev.filter((item) => item.id !== id));
+      }
+    }
+  };
+
+  const handleRestore = async (id, e) => {
+    e.stopPropagation();
+    const { error } = await supabase.from("contact_submissions").update({ status: 'read' }).eq("id", id);
+    if (!error) {
+      setSubmissions((prev) => prev.map((item) => item.id === id ? { ...item, status: 'read' } : item));
+    }
+  };
+
   const scrollToSection = (tab) => {
     setActiveTab(tab);
     if (tab === "Dashboard") window.scrollTo({ top: 0, behavior: "smooth" });
     else if (tab === "Inbox" && inboxRef.current) inboxRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const copyToClipboard = (text, e) => {
-    e.stopPropagation(); 
-    navigator.clipboard.writeText(text);
-  };
-
-  const handleDelete = async (id, e) => {
-    e.stopPropagation();
-    if (!window.confirm("Delete this submission?")) return;
-    await supabase.from("contact_submissions").delete().eq("id", id);
-    setSubmissions((prev) => prev.filter((item) => item.id !== id));
-  };
-
   const handleOpenMessage = async (item) => {
+    if (item.status === "deleted") {
+        setSelectedInquiry(item);
+        return;
+    }
     setSelectedInquiry(item);
     if (item.status !== "read") {
-      await supabase.from("contact_submissions").update({ status: "read" }).eq("id", item.id);
-      setSubmissions((prev) => prev.map((sub) => sub.id === item.id ? { ...sub, status: "read" } : sub));
+      const { error } = await supabase.from("contact_submissions").update({ status: "read" }).eq("id", item.id);
+      if (!error) {
+        setSubmissions((prev) => prev.map((sub) => sub.id === item.id ? { ...sub, status: "read" } : sub));
+      }
     }
   };
 
@@ -250,7 +285,6 @@ export default function Admin() {
               <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Contact Management</h1>
               <p className="text-sm text-slate-500 mt-1 uppercase tracking-wider font-semibold opacity-70">Operational Overview & Portal Analytics</p>
             </div>
-            
             <div className="flex items-center gap-3">
               <div className="relative">
                 <select 
@@ -276,7 +310,7 @@ export default function Admin() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <EnterpriseCard title={`Total (${months[selectedMonth].slice(0,3)})`} value={filteredByMonth.length} icon="📊" />
             <EnterpriseCard title="Unread Messages" value={filteredByMonth.filter(i => i.status === "unread").length} icon="✉️" />
-            <EnterpriseCard title="Today's Activity" value={submissions.filter(i => new Date(i.created_at).toDateString() === new Date().toDateString()).length} icon="⚡" />
+            <EnterpriseCard title="Today's Activity" value={submissions.filter(i => i.status !== 'deleted' && new Date(i.created_at).toDateString() === new Date().toDateString()).length} icon="⚡" />
             <EnterpriseCard title="Monthly Total" value={filteredByMonth.length} icon="📈" />
           </div>
 
@@ -287,20 +321,9 @@ export default function Admin() {
                   <span className="w-3 h-3 bg-blue-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.4)]"></span>
                   {chartMode === "month" ? `${months[selectedMonth]} Analytics` : "Rolling Days Analytics"}
                 </h3>
-                
                 <div className="flex items-center gap-2 ml-6 mt-2">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Last</p>
-                  <input 
-                    type="number" 
-                    min="1" 
-                    max="365"
-                    value={timeRange}
-                    onChange={(e) => {
-                      setTimeRange(Number(e.target.value));
-                      setChartMode("days");
-                    }}
-                    className="w-12 bg-slate-100 border-none text-[11px] font-black text-blue-600 text-center py-0.5 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  />
+                  <input type="number" min="1" max="365" value={timeRange} onChange={(e) => { setTimeRange(Number(e.target.value)); setChartMode("days"); }} className="w-12 bg-slate-100 border-none text-[11px] font-black text-blue-600 text-center py-0.5 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Days Analytics</p>
                 </div>
               </div>
@@ -325,33 +348,93 @@ export default function Admin() {
 
           <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-lg">
             <div className="bg-slate-50 border-b border-slate-200 px-6 py-3 flex flex-wrap items-center gap-6 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              <span className="text-blue-600 border-b-2 border-blue-600 pb-1 cursor-pointer">All Email</span>
+              <div className="flex gap-6">
+                <span 
+                    onClick={() => {setInboxView("all"); setSelectedIds([])}}
+                    className={`pb-1 cursor-pointer transition-all ${inboxView === "all" ? "text-blue-600 border-b-2 border-blue-600" : "text-slate-400 hover:text-slate-600"}`}
+                >
+                    All Email
+                </span>
+                <span 
+                    onClick={() => {setInboxView("trash"); setSelectedIds([])}}
+                    className={`pb-1 cursor-pointer transition-all flex items-center gap-1.5 ${inboxView === "trash" ? "text-red-600 border-b-2 border-red-600" : "text-slate-400 hover:text-slate-600"}`}
+                >
+                    <Trash2 size={12} /> Trash ({submissions.filter(s => s.status === 'deleted').length})
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {selectedIds.length > 0 && (
+                    <>
+                        {inboxView === "trash" && (
+                             <button 
+                                onClick={handleBulkRestore}
+                                className="bg-blue-500 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 hover:bg-blue-600 transition-all shadow-md animate-in fade-in slide-in-from-left-4 duration-300"
+                            >
+                                <RefreshCcw size={14} /> Restore ({selectedIds.length})
+                            </button>
+                        )}
+                        <button 
+                            onClick={handleBulkDelete}
+                            className={`${inboxView === 'trash' ? 'bg-slate-800' : 'bg-red-500'} text-white px-4 py-1.5 rounded-lg flex items-center gap-2 hover:opacity-90 transition-all shadow-md animate-in fade-in slide-in-from-left-4 duration-300`}
+                        >
+                            <Trash2 size={14} /> {inboxView === 'trash' ? 'Delete Permanently' : 'Move to Trash'} ({selectedIds.length})
+                        </button>
+                    </>
+                )}
+              </div>
+
               <div className="ml-auto flex items-center gap-3">
-                <span className="text-xs font-semibold normal-case text-slate-500 flex items-center gap-1"><Calendar size={14} className="opacity-60" /> Filter by Date:</span>
-                <input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="bg-white border border-slate-200 rounded px-2 py-1 text-[11px] font-bold text-slate-700 outline-none focus:border-blue-500 transition-colors cursor-pointer" />
-                {filterDate && <button onClick={() => setFilterDate("")} className="text-[10px] text-red-500 hover:text-red-700 font-black ml-1">CLEAR</button>}
+                <span className="text-xs font-semibold normal-case text-slate-500 flex items-center gap-2">
+                  <span className="hidden md:inline">Filter by Date:</span>
+                  <span className="inline md:hidden">Filter:</span>
+                  
+                  {/* Calendar Icon wrapper for mobile and desktop */}
+                  <div className="relative flex items-center">
+                    <Calendar 
+                        size={16} 
+                        className={`cursor-pointer transition-colors ${filterDate ? 'text-blue-600' : 'text-slate-400 hover:text-blue-600'}`}
+                        onClick={() => dateInputRef.current?.showPicker()} // Programmatically open the date picker
+                    />
+                    {/* Hidden on mobile view but provides the functional input */}
+                    <input 
+                        ref={dateInputRef}
+                        type="date" 
+                        value={filterDate} 
+                        onChange={(e) => setFilterDate(e.target.value)} 
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full md:relative md:opacity-100 md:block md:w-auto md:ml-2 bg-white border border-slate-200 rounded px-2 py-1 text-[11px] font-bold text-slate-700 outline-none focus:border-blue-500 transition-colors" 
+                    />
+                  </div>
+                </span>
+                {filterDate && <button onClick={() => setFilterDate("")} className="text-[10px] text-red-500 hover:text-red-700 font-black ml-1 uppercase">CLEAR</button>}
               </div>
             </div>
 
             <div className="max-h-[700px] overflow-y-auto no-scrollbar divide-y divide-slate-100">
-              <div className="bg-slate-50/90 px-6 py-2.5 text-[10px] font-black text-blue-700 uppercase tracking-widest sticky top-0 z-10 backdrop-blur-md border-b border-slate-200">{filterDate ? `Records for ${new Date(filterDate).toLocaleDateString()}` : "Recent Communications"}</div>
+              <div className="bg-slate-50/90 px-6 py-2.5 text-[10px] font-black text-blue-700 uppercase tracking-widest sticky top-0 z-10 backdrop-blur-md border-b border-slate-200">
+                {inboxView === 'trash' ? "Trash Bin - Items here are soft-deleted" : filterDate ? `Records for ${new Date(filterDate).toLocaleDateString()}` : "Recent Communications"}
+              </div>
               {loading ? ( <div className="p-20 text-center text-slate-400 font-medium italic">Syncing with server...</div> ) : filteredSubmissions.length === 0 ? ( <div className="p-20 text-center text-slate-400 font-medium italic">No results found for this selection.</div> ) : (
                 filteredSubmissions.map((item) => (
-                  <div key={item.id} onClick={() => handleOpenMessage(item)} className={`flex items-start gap-3 md:gap-5 p-4 md:p-5 cursor-pointer transition-all border-l-4 group ${item.status === "unread" ? "border-blue-600 bg-blue-50/20" : "border-transparent hover:bg-slate-50"}`}>
-                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-white shadow-md ${item.status === "unread" ? "bg-blue-600" : "bg-slate-400"}`}>{item.full_name?.charAt(0).toUpperCase()}</div>
+                  <div key={item.id} onClick={() => handleOpenMessage(item)} className={`flex items-start gap-3 md:gap-5 p-4 md:p-5 cursor-pointer transition-all border-l-4 group ${item.status === "unread" ? "border-blue-600 bg-blue-50/20" : "border-transparent hover:bg-slate-50"} ${selectedIds.includes(item.id) ? "bg-blue-50/40" : ""} ${item.status === 'deleted' ? 'opacity-75' : ''}`}>
+                    <div className="pt-2">
+                       <button 
+                         onClick={(e) => toggleSelect(item.id, e)}
+                         className={`transition-colors duration-200 ${selectedIds.includes(item.id) ? (inboxView === 'trash' ? 'text-red-600' : 'text-blue-600') : 'text-slate-300 group-hover:text-slate-400'}`}
+                       >
+                         {selectedIds.includes(item.id) ? <CheckSquare size={20} /> : <Square size={20} />}
+                       </button>
+                    </div>
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-white shadow-md ${item.status === "unread" ? "bg-blue-600" : item.status === 'deleted' ? "bg-slate-600" : "bg-slate-400"}`}>{item.full_name?.charAt(0).toUpperCase()}</div>
                     <div className="flex-1 min-w-0 pt-0.5">
                       <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-3 truncate mr-2">
                           <h4 className={`text-sm md:text-base truncate ${item.status === "unread" ? "font-black text-slate-900" : "font-bold text-slate-700"}`}>
-                            {/* HIGHLIGHTED NAME */}
                             <HighlightText text={item.full_name} highlight={search} />
                           </h4>
-                          <div className="flex items-center gap-1 group/ref relative">
-                            <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase shrink-0 mt-0.5">
+                          <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase shrink-0 mt-0.5">
                               REF: #<HighlightText text={item.id.slice(0, 8).toUpperCase()} highlight={search} />
-                            </span>
-                            <button onClick={(e) => copyToClipboard(`#${item.id.slice(0, 8).toUpperCase()}`, e)} className="opacity-0 group-hover/ref:opacity-100 p-1 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all duration-200" title="Copy Reference ID"><Copy size={12} /></button>
-                          </div>
+                          </span>
                         </div>
                         <div className="text-right flex flex-col items-end min-w-[70px] md:min-w-[100px] shrink-0">
                           <span className={`tabular-nums tracking-tight font-black text-xs md:text-lg ${item.status === "unread" ? "text-blue-600" : "text-slate-600"}`}>{new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
@@ -359,13 +442,19 @@ export default function Admin() {
                         </div>
                       </div>
                       <div className={`text-xs md:text-sm mb-1 truncate ${item.status === "unread" ? "text-slate-900 font-extrabold" : "text-blue-600 font-semibold"}`}>
-                        {/* HIGHLIGHTED SUBJECT */}
                         <HighlightText text={item.subject || "No Subject"} highlight={search} />
                       </div>
                       <p className="text-xs md:text-sm text-slate-500 truncate leading-relaxed line-clamp-1 opacity-90">{item.message}</p>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity self-center pr-2">
-                      <button onClick={(e) => handleDelete(item.id, e)} className="p-2 text-slate-300 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"><Trash2 size={18} /></button>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity self-center pr-2 flex items-center gap-2">
+                      {item.status === 'deleted' ? (
+                        <>
+                            <button onClick={(e) => handleRestore(item.id, e)} className="p-2 text-slate-300 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors" title="Restore"><RefreshCcw size={18} /></button>
+                            <button onClick={(e) => handleDelete(item.id, e)} className="p-2 text-slate-300 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors" title="Delete Permanently"><Trash2 size={18} /></button>
+                        </>
+                      ) : (
+                        <button onClick={(e) => handleDelete(item.id, e)} className="p-2 text-slate-300 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors" title="Move to Trash"><Trash2 size={18} /></button>
+                      )}
                     </div>
                   </div>
                 ))
@@ -378,16 +467,17 @@ export default function Admin() {
       {selectedInquiry && (
         <div className="fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white flex flex-col">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600 flex-shrink-0" />
-            
+            <div className={`absolute left-0 top-0 bottom-0 w-1.5 flex-shrink-0 ${selectedInquiry.status === 'deleted' ? 'bg-red-500' : 'bg-blue-600'}`} />
             <div className="p-8 md:p-10 pb-6 flex justify-between items-start flex-shrink-0">
               <div className="flex gap-4 md:gap-6">
-                <div className="h-16 w-16 md:h-20 md:w-20 rounded-[1.5rem] md:rounded-[1.8rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-black text-2xl md:text-3xl shadow-2xl shadow-blue-200 shrink-0">
+                <div className={`h-16 w-16 md:h-20 md:w-20 rounded-[1.5rem] md:rounded-[1.8rem] bg-gradient-to-br flex items-center justify-center text-white font-black text-2xl md:text-3xl shadow-2xl shrink-0 ${selectedInquiry.status === 'deleted' ? 'from-slate-700 to-slate-900 shadow-slate-200' : 'from-blue-600 to-indigo-700 shadow-blue-200'}`}>
                   {selectedInquiry.full_name?.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-md border border-blue-100">Customer Inquiry</span>
+                    <span className={`px-3 py-1 text-[10px] md:text-[11px] font-black uppercase tracking-widest rounded-md border ${selectedInquiry.status === 'deleted' ? 'bg-red-50 text-red-700 border-red-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>
+                        {selectedInquiry.status === 'deleted' ? 'Deleted Inquiry' : 'Customer Inquiry'}
+                    </span>
                     <span className="text-slate-300 text-[10px] md:text-[11px] font-bold tracking-widest uppercase">REF: #<HighlightText text={selectedInquiry.id.slice(0, 8).toUpperCase()} highlight={search} /></span>
                   </div>
                   <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-1 truncate">
@@ -398,25 +488,27 @@ export default function Admin() {
               </div>
               <button onClick={() => setSelectedInquiry(null)} className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all flex-shrink-0"><X size={28} /></button>
             </div>
-
             <div className="px-8 md:px-10 py-4 space-y-6 overflow-y-auto custom-scrollbar flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                 <div className="p-4 md:p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Received On</p>
-                  <p className="text-sm font-black text-slate-700">{new Date(selectedInquiry.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                </div>         
+                {selectedInquiry.status === 'deleted' && (
+                    <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-700">
+                        <AlertTriangle size={20} />
+                        <p className="text-xs font-bold uppercase tracking-tight">This message is in the trash. Restore it to reply via email.</p>
+                    </div>
+                )}
                 <div className="p-4 md:p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject</p>
                   <p className="text-sm font-black text-slate-700 uppercase break-words">
                     <HighlightText text={selectedInquiry.subject || "No Subject"} highlight={search} />
                   </p>
                 </div>
-              </div>
-              
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]" /> 
-                  Inquiry Message
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${selectedInquiry.status === 'deleted' ? 'bg-red-500' : 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]'}`} /> Inquiry Message
+                  </span>
+                  <span className="text-slate-500">
+                    {new Date(selectedInquiry.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at {new Date(selectedInquiry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                  </span>
                 </p>
                 <div className="relative p-6 md:p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2rem] md:rounded-[2.5rem] shadow-inner">
                   <Quote className="absolute right-4 top-4 w-16 h-16 md:w-24 md:h-24 text-slate-100/50 -rotate-12 pointer-events-none" />
@@ -426,14 +518,20 @@ export default function Admin() {
                 </div>
               </div>
             </div>
-
             <div className="p-8 md:p-10 pt-4 flex flex-col sm:flex-row items-center gap-4 flex-shrink-0 bg-white border-t border-slate-50">
-              <button onClick={() => setSelectedInquiry(null)} className="w-full sm:flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">
-                Dismiss
-              </button>
-              <a href={`mailto:${selectedInquiry.email}`} className="w-full sm:flex-[2] py-4 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-blue-200 uppercase tracking-widest group">
-                <Mail size={20} className="group-hover:animate-pulse" /> Reply via Email
-              </a>
+              <button onClick={() => setSelectedInquiry(null)} className="w-full sm:flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">Dismiss</button>
+              {selectedInquiry.status === 'deleted' ? (
+                <button 
+                    onClick={(e) => { handleRestore(selectedInquiry.id, e); setSelectedInquiry(null); }}
+                    className="w-full sm:flex-[2] py-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl uppercase tracking-widest"
+                >
+                    <RefreshCcw size={20} /> Restore Message
+                </button>
+              ) : (
+                <a href={`mailto:${selectedInquiry.email}`} className="w-full sm:flex-[2] py-4 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-blue-200 uppercase tracking-widest group">
+                    <Mail size={20} className="group-hover:animate-pulse" /> Reply via Email
+                </a>
+              )}
             </div>
           </div>
         </div>
