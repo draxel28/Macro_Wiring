@@ -68,7 +68,14 @@ export default function Admin() {
 
   useEffect(() => {
     const isAuthorized = sessionStorage.getItem("admin_access");
-    if (!isAuthorized) navigate("/");
+    if (!isAuthorized) {
+      navigate("/");
+    }
+
+    // This cleanup function clears the session automatically when you leave the Admin page
+    return () => {
+      sessionStorage.removeItem("admin_access");
+    };
   }, [navigate]);
 
   useEffect(() => {
@@ -267,6 +274,21 @@ export default function Admin() {
     sessionStorage.removeItem("admin_access");
     navigate("/");
   };
+
+  function EnterpriseCard({ title, value, icon }) {
+    return (
+      <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-2xl">{icon}</span>
+          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+            <ArrowUp size={14} className="text-slate-400 group-hover:text-blue-600 rotate-45" />
+          </div>
+        </div>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
+        <h3 className="text-3xl font-black text-slate-800 tabular-nums">{value}</h3>
+      </div>
+    );
+  }
 
   // --- LOADING SCREEN COMPONENT ---
   if (loading) {
@@ -549,36 +571,15 @@ export default function Admin() {
             </div>
             <div className="p-8 md:p-10 pt-4 flex flex-col sm:flex-row items-center gap-4 flex-shrink-0 bg-white border-t border-slate-50">
               <button onClick={() => setSelectedInquiry(null)} className="w-full sm:flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">Dismiss</button>
-              {selectedInquiry.status === 'deleted' ? (
-                <button 
-                    onClick={(e) => { handleRestore(selectedInquiry.id, e); setSelectedInquiry(null); }}
-                    className="w-full sm:flex-[2] py-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl uppercase tracking-widest"
-                >
-                    <RefreshCcw size={20} /> Restore Message
-                </button>
-              ) : (
-                <a href={`mailto:${selectedInquiry.email}`} className="w-full sm:flex-[2] py-4 bg-slate-900 hover:bg-blue-600 text-white text-sm font-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl hover:shadow-blue-200 uppercase tracking-widest group">
-                    <Mail size={20} className="group-hover:animate-pulse" /> Reply via Email
+              {selectedInquiry.status !== 'deleted' && (
+                <a href={`mailto:${selectedInquiry.email}?subject=RE: ${selectedInquiry.subject}`} className="w-full sm:flex-1 py-4 bg-blue-600 text-white text-sm font-black rounded-2xl hover:bg-blue-700 hover:shadow-xl hover:-translate-y-1 transition-all text-center uppercase tracking-widest flex items-center justify-center gap-3">
+                  <Mail size={18} /> Send Response
                 </a>
               )}
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function EnterpriseCard({ title, value, icon }) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{title}</p>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800">{value}</h3>
-        </div>
-        <span className="text-lg md:text-xl opacity-50">{icon}</span>
-      </div>
     </div>
   );
 }
