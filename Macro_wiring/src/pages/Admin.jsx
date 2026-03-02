@@ -53,8 +53,7 @@ export default function Admin() {
   const [search, setSearch] = useState("");
   const [filterDate, setFilterDate] = useState(""); 
   const [activeTab, setActiveTab] = useState("Dashboard");
-  const [inboxView, setInboxView] = useState("all"); // "all" or "trash"
-  
+  const [inboxView, setInboxView] = useState("all"); 
   const [selectedIds, setSelectedIds] = useState([]);
 
   const [timeRange, setTimeRange] = useState(7);
@@ -72,7 +71,6 @@ export default function Admin() {
       navigate("/");
     }
 
-    // This cleanup function clears the session automatically when you leave the Admin page
     return () => {
       sessionStorage.removeItem("admin_access");
     };
@@ -88,7 +86,6 @@ export default function Admin() {
       .select("*")
       .order("created_at", { ascending: false });
     if (!error) setSubmissions(data || []);
-    // Slight delay to make the transition feel smoother
     setTimeout(() => setLoading(false), 1500);
   };
 
@@ -275,22 +272,21 @@ export default function Admin() {
     navigate("/");
   };
 
+  // RE-DESIGNED SIMPLE CARD
   function EnterpriseCard({ title, value, icon }) {
     return (
-      <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-md transition-all group">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-2xl">{icon}</span>
-          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-            <ArrowUp size={14} className="text-slate-400 group-hover:text-blue-600 rotate-45" />
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-blue-200">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-xl">
+            {icon}
           </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{title}</p>
         </div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-        <h3 className="text-3xl font-black text-slate-800 tabular-nums">{value}</h3>
+        <h3 className="text-3xl font-bold text-slate-800 tabular-nums">{value}</h3>
       </div>
     );
   }
 
-  // --- LOADING SCREEN COMPONENT ---
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center relative overflow-hidden">
@@ -562,20 +558,28 @@ export default function Admin() {
                   </span>
                 </p>
                 <div className="relative p-6 md:p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2rem] md:rounded-[2.5rem] shadow-inner">
-                  <Quote className="absolute right-4 top-4 w-16 h-16 md:w-24 md:h-24 text-slate-100/50 -rotate-12 pointer-events-none" />
-                  <span className="relative z-10 italic whitespace-pre-line font-medium leading-relaxed block text-slate-700 text-sm md:text-base break-words">
-                    "{selectedInquiry.message}"
-                  </span>
+                  <Quote className="absolute top-6 left-6 text-slate-200" size={40} />
+                  <p className="relative z-10 text-sm md:text-base text-slate-700 leading-relaxed italic whitespace-pre-line">
+                    {selectedInquiry.message}
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="p-8 md:p-10 pt-4 flex flex-col sm:flex-row items-center gap-4 flex-shrink-0 bg-white border-t border-slate-50">
-              <button onClick={() => setSelectedInquiry(null)} className="w-full sm:flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-all uppercase tracking-widest">Dismiss</button>
-              {selectedInquiry.status !== 'deleted' && (
-                <a href={`mailto:${selectedInquiry.email}?subject=RE: ${selectedInquiry.subject}`} className="w-full sm:flex-1 py-4 bg-blue-600 text-white text-sm font-black rounded-2xl hover:bg-blue-700 hover:shadow-xl hover:-translate-y-1 transition-all text-center uppercase tracking-widest flex items-center justify-center gap-3">
-                  <Mail size={18} /> Send Response
-                </a>
-              )}
+            <div className="p-8 md:p-10 pt-4 flex gap-3 flex-shrink-0">
+                <button 
+                  onClick={() => setSelectedInquiry(null)}
+                  className="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
+                >
+                  Close
+                </button>
+                {selectedInquiry.status !== 'deleted' && (
+                    <a 
+                      href={`mailto:${selectedInquiry.email}?subject=RE: ${selectedInquiry.subject}`}
+                      className="flex-[2] py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl text-center shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                    >
+                      <Mail size={16} /> Reply via Email
+                    </a>
+                )}
             </div>
           </div>
         </div>

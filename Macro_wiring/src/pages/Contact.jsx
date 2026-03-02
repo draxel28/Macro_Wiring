@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import { ArrowUp, Clock, Phone, Mail } from "lucide-react"; 
+import { ArrowUp, Clock, Phone, Mail, CheckCircle, AlertCircle } from "lucide-react"; 
 
 export default function Contact() {
   /* <Supabase>*/
@@ -16,6 +16,17 @@ export default function Contact() {
   // --- SCROLL TO TOP STATE ---
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Auto-hide success or error message after 3 seconds
+  useEffect(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        setSuccess(false);
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
 
   // Monitor scroll position
   useEffect(() => {
@@ -89,6 +100,36 @@ export default function Contact() {
 
   return (
     <div className="bg-white relative">
+      {/* FLOATING SUCCESS MESSAGE */}
+      {success && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-white border border-green-100 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex items-center gap-4">
+            <div className="bg-green-500 p-2 rounded-full text-white shrink-0">
+              <CheckCircle size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Submission Successful</p>
+              <p className="text-xs text-slate-500 font-medium">Your message has been sent to our team.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING ERROR MESSAGE */}
+      {error && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-white border border-red-100 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex items-center gap-4">
+            <div className="bg-red-500 p-2 rounded-full text-white shrink-0">
+              <AlertCircle size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Submission Failed</p>
+              <p className="text-xs text-slate-500 font-medium">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="tech-header-container text-white py-16 px-6 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 pointer-events-none">
           <div className="motherboard-traces opacity-20"></div>
@@ -122,7 +163,6 @@ export default function Contact() {
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  {/* Inquiry Section */}
                   <div>
                     <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider">Inquiries</p>
                     <div className="space-y-3 text-gray-600 text-sm">
@@ -138,10 +178,9 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  {/* Availability Hours Section */}
                   <div>
                     <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider flex items-center gap-2">
-                       Availability Hours
+                        Availability Hours
                     </p>
                     <div className="grid grid-cols-1 gap-2 text-gray-600 text-sm font-medium">
                       <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
@@ -257,14 +296,6 @@ export default function Contact() {
                 >
                   {loading ? "Sending..." : "Send Message"}
                 </button>
-                {success && (
-                  <p className="text-green-600 mt-4 font-medium">
-                    Your message has been submitted successfully.
-                  </p>
-                )}
-                {error && (
-                  <p className="text-red-600 mt-4 font-medium">{error}</p>
-                )}
               </form>
             </div>
           </div>
