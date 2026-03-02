@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import { ArrowUp } from "lucide-react"; // Imported for the button icon
+import { ArrowUp, Clock, Phone, Mail } from "lucide-react"; 
 
 export default function Contact() {
   /* <Supabase>*/
@@ -20,14 +20,12 @@ export default function Contact() {
   // Monitor scroll position
   useEffect(() => {
     const handleScroll = () => {
-      // Show button after scrolling 400px
       if (window.scrollY > 400) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
       }
 
-      // Check if user is near the bottom to adjust button position (overlap prevention)
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
       const scrolled = window.scrollY;
@@ -79,22 +77,10 @@ export default function Contact() {
     setLoading(false);
   };
 
-  /* function for quotation*/
   const handleQuotationClick = () => {
     setSubject("Request for Quotation");
-
     setMessage(
-      `Good day,
-
-We would like to request a quotation for the following:
-
-Product/Service:
-Estimated Quantity:
-Target Delivery Date:
-
-Please advise on pricing, lead time, and terms.
-
-Thank you.`,
+      `Good day,\n\nWe would like to request a quotation for the following:\n\nProduct/Service:\nEstimated Quantity:\nTarget Delivery Date:\n\nPlease advise on pricing, lead time, and terms.\n\nThank you.`
     );
 
     const formSection = document.getElementById("contact-form");
@@ -125,7 +111,6 @@ Thank you.`,
         </div>
       </div>
 
-      {/* MAIN CONTACT SECTION */}
       <div className="bg-white py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16">
@@ -135,40 +120,50 @@ Thank you.`,
                 <h3 className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-4">
                   Contact
                 </h3>
-                <p className="text-gray-800 font-semibold mb-3">Inquiries</p>
-                <div className="space-y-3 text-gray-600">
-                  <a
-                    href="tel:+63464377204"
-                    className="flex items-center gap-3 hover:text-blue-600 transition"
-                  >
-                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.516 2.065a2 2 0 01-.45 1.916l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.916-.45l2.065.516A2 2 0 0119 18.72V21a2 2 0 01-2 2h-1C7.716 23 1 16.284 1 8V7a2 2 0 012-2z" />
-                    </svg>
-                    (+63 46) 437-7204
-                  </a>
-                  <a
-                    href="tel:+63464772499"
-                    className="flex items-center gap-3 hover:text-blue-600 transition"
-                  >
-                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.516 2.065a2 2 0 01-.45 1.916l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.916-.45l2.065.516A2 2 0 0119 18.72V21a2 2 0 01-2 2h-1C7.716 23 1 16.284 1 8V7a2 2 0 012-2z" />
-                    </svg>
-                    (+63 46) 477-2499
-                  </a>
-                  <a
-                    href="mailto:sales@macrowiring.co"
-                    className="flex items-center gap-3 hover:text-blue-600 transition mt-4"
-                  >
-                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 12H8m8 0l-4 4m4-4l-4-4M4 6h16v12H4z" />
-                    </svg>
-                    sales@macrowiring.co
-                  </a>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  {/* Inquiry Section */}
+                  <div>
+                    <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider">Inquiries</p>
+                    <div className="space-y-3 text-gray-600 text-sm">
+                      <a href="tel:+63464377204" className="flex items-center gap-3 hover:text-blue-600 transition">
+                        <Phone size={14} className="text-blue-600" /> (+63 46) 437-7204
+                      </a>
+                      <a href="tel:+63464772499" className="flex items-center gap-3 hover:text-blue-600 transition">
+                        <Phone size={14} className="text-blue-600" /> (+63 46) 477-2499
+                      </a>
+                      <a href="mailto:sales@macrowiring.co" className="flex items-center gap-3 hover:text-blue-600 transition pt-1">
+                        <Mail size={14} className="text-blue-600" /> sales@macrowiring.co
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Availability Hours Section */}
+                  <div>
+                    <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider flex items-center gap-2">
+                       Availability Hours
+                    </p>
+                    <div className="grid grid-cols-1 gap-2 text-gray-600 text-sm font-medium">
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 6:00 AM - 3:00 PM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 7:00 AM - 4:00 PM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 6:00 PM - 3:00 AM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 7:00 PM - 4:00 AM
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-6">
+
+                <div className="mt-8">
                   <button
                     onClick={handleQuotationClick}
-                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-md hover:shadow-blue-200"
                   >
                     Request a Quotation
                   </button>
@@ -188,7 +183,7 @@ Thank you.`,
                 <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                   <iframe
                     title="Macro Wiring Location"
-                    src="https://www.google.com/maps?q=Cavite%20Economic%20Zone%20Rosario%20Cavite&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3864.6756201314954!2d120.89832747585093!3d14.417244986048166!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33962d398935c103%3A0xc664980755a5b565!2sCavite%20Economic%20Zone!5e0!3m2!1sen!2sph!4v1709572000000!5m2!1sen!2sph"
                     width="100%"
                     height="200"
                     loading="lazy"
@@ -276,7 +271,6 @@ Thank you.`,
         </div>
       </div>
 
-      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON --- */}
       <button
         onClick={scrollToTop}
         className={`fixed z-50 p-4 

@@ -81,7 +81,7 @@ const CookieConsent = () => {
               </div>
               <div className="space-y-4 text-[14px] text-gray-600 leading-relaxed">
                 <p>
-                  We collect personal information (Name, Email, Contact Number) <b>only</b> when voluntarily submitted via our Contact Us form. This data is used exclusively to respond to your specific business inquiries and is processed in line with our <b>ISO 9001:2015</b> quality procedures.
+                  We collect personal information (Name, Email, Enquiry Details) <b>only</b> when voluntarily submitted via our Contact Us form. This data is used exclusively to respond to your specific business inquiries and is processed in line with our <b>ISO 9001:2015</b> quality procedures.
                 </p>
                 <p>
                   <b>Information Security:</b> We do not provide public user accounts. Your information is stored in secured internal systems protected against unauthorized access. We do not sell or share details with third-party marketers.
