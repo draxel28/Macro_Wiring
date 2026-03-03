@@ -106,7 +106,7 @@ const CookieConsent = () => {
               <div className="space-y-3">
                 {[
                   { t: "Philippine Scope", d: "Information concerning products or services is applicable only in the Philippines." },
-                  { t: "Intellectual Property", d: "Distribution, modification, or reproduction of content (text, images, source code) is prohibited without written permission." },
+                  { t: "Intellectual Property", d: "Distribution, modification, or reproduction of content (text, images, videos, source code) is prohibited without written permission." },
                   { t: "Liability Disclaimer", d: "Browsing is at the user's risk. We assume no liability for errors or omissions in site contents." },
                   { t: "Communications", d: "Inquiries transmitted to this site are treated as non-confidential for business processing purposes." },
                   { t: "Third-Party Links", d: "We are not responsible for the content of any off-site pages or linked websites." }
