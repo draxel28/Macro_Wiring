@@ -65,6 +65,11 @@ export default function Admin() {
   const inboxRef = useRef(null);
   const dateInputRef = useRef(null); 
 
+  // Indicator logic: Count unread messages that are not in trash
+  const unreadCount = useMemo(() => {
+    return submissions.filter(s => s.status === "unread").length;
+  }, [submissions]);
+
   useEffect(() => {
     const isAuthorized = sessionStorage.getItem("admin_access");
     if (!isAuthorized) {
@@ -322,6 +327,11 @@ export default function Admin() {
         {[ { name: "Dashboard", icon: <LayoutDashboard size={22} /> }, { name: "Inbox", icon: <Inbox size={22} /> } ].map((tab) => (
           <button key={tab.name} onClick={() => scrollToSection(tab.name)} className={`group relative p-4 rounded-2xl transition-all duration-300 flex items-center justify-center ${activeTab === tab.name ? "bg-blue-600 text-white shadow-lg scale-110" : "text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-md"}`}>
             {tab.icon}
+            {tab.name === "Inbox" && unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-in zoom-in">
+                {unreadCount}
+              </span>
+            )}
             <span className="absolute right-16 px-3 py-1 bg-slate-800 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-slate-700">{tab.name}</span>
           </button>
         ))}
@@ -458,8 +468,13 @@ export default function Admin() {
             </div>
 
             <div className="max-h-[700px] overflow-y-auto no-scrollbar divide-y divide-slate-100">
-              <div className="bg-slate-50/90 px-6 py-2.5 text-[10px] font-black text-blue-700 uppercase tracking-widest sticky top-0 z-10 backdrop-blur-md border-b border-slate-200">
+              <div className="bg-slate-50/90 px-6 py-2.5 text-[10px] font-black text-blue-700 uppercase tracking-widest sticky top-0 z-10 backdrop-blur-md border-b border-slate-200 flex items-center gap-2">
                 {inboxView === 'trash' ? "Trash Bin - Items here are soft-deleted" : filterDate ? `Records for ${new Date(filterDate).toLocaleDateString()}` : "Recent Communications"}
+                {inboxView === 'all' && unreadCount > 0 && (
+                  <span className="bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                    {unreadCount} NEW
+                  </span>
+                )}
               </div>
               {filteredSubmissions.length === 0 ? ( <div className="p-20 text-center text-slate-400 font-medium italic">No results found for this selection.</div> ) : (
                 filteredSubmissions.map((item) => (
@@ -557,29 +572,22 @@ export default function Admin() {
                     {new Date(selectedInquiry.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at {new Date(selectedInquiry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                   </span>
                 </p>
-                <div className="relative p-6 md:p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2rem] md:rounded-[2.5rem] shadow-inner">
-                  <Quote className="absolute top-6 left-6 text-slate-200" size={40} />
-                  <p className="relative z-10 text-sm md:text-base text-slate-700 leading-relaxed italic whitespace-pre-line">
-                    {selectedInquiry.message}
-                  </p>
+                <div className="relative p-6 md:p-8 bg-slate-50/30 rounded-[2rem] border border-slate-100">
+                  <Quote className="absolute top-4 left-4 text-slate-200" size={40} />
+                  <p className="relative text-slate-700 leading-relaxed text-sm md:text-base whitespace-pre-wrap">{selectedInquiry.message}</p>
                 </div>
               </div>
             </div>
-            <div className="p-8 md:p-10 pt-4 flex gap-3 flex-shrink-0">
-                <button 
-                  onClick={() => setSelectedInquiry(null)}
-                  className="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all"
-                >
-                  Close
-                </button>
-                {selectedInquiry.status !== 'deleted' && (
-                    <a 
-                      href={`mailto:${selectedInquiry.email}?subject=RE: ${selectedInquiry.subject}`}
-                      className="flex-[2] py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl text-center shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                    >
-                      <Mail size={16} /> Reply via Email
-                    </a>
-                )}
+            {/* RESTORED ORIGINAL FOOTER WITHOUT COPY EMAIL */}
+            <div className="p-8 md:p-10 pt-4 flex-shrink-0">
+               <div className="flex flex-col md:flex-row gap-4">
+                 <a 
+                   href={`mailto:${selectedInquiry.email}?subject=RE: ${selectedInquiry.subject}`}
+                   className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-white transition-all shadow-xl active:scale-95 ${selectedInquiry.status === 'deleted' ? 'bg-slate-400 pointer-events-none' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200'}`}
+                 >
+                   <Mail size={18} /> Reply via Email
+                 </a>
+               </div>
             </div>
           </div>
         </div>
