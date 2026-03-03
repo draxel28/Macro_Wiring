@@ -9,9 +9,11 @@ function SectionD() {
     if (videoRef.current) {
       if (videoRef.current.requestFullscreen) {
         videoRef.current.requestFullscreen();
-      } else if (videoRef.current.webkitRequestFullscreen) { /* Safari */
+      } else if (videoRef.current.webkitRequestFullscreen) {
+        /* Safari */
         videoRef.current.webkitRequestFullscreen();
-      } else if (videoRef.current.msRequestFullscreen) { /* IE11 */
+      } else if (videoRef.current.msRequestFullscreen) {
+        /* IE11 */
         videoRef.current.msRequestFullscreen();
       }
     }
@@ -48,17 +50,39 @@ function SectionD() {
           </p>
 
           <ul className="space-y-3 mb-8 text-gray-700 font-medium">
-            <li className="flex items-center gap-2 text-blue-600">✔ <span className="text-gray-700">Increased operational efficiency</span></li>
-            <li className="flex items-center gap-2 text-blue-600">✔ <span className="text-gray-700">Reliable industrial-grade systems</span></li>
-            <li className="flex items-center gap-2 text-blue-600">✔ <span className="text-gray-700">Sustainable energy integration</span></li>
-            <li className="flex items-center gap-2 text-blue-600">✔ <span className="text-gray-700">Long-term cost optimization</span></li>
+            <li className="flex items-center gap-2 text-blue-600">
+              ✔{" "}
+              <span className="text-gray-700">
+                Increased operational efficiency
+              </span>
+            </li>
+            <li className="flex items-center gap-2 text-blue-600">
+              ✔{" "}
+              <span className="text-gray-700">
+                Reliable industrial-grade systems
+              </span>
+            </li>
+            <li className="flex items-center gap-2 text-blue-600">
+              ✔{" "}
+              <span className="text-gray-700">
+                Sustainable energy integration
+              </span>
+            </li>
+            <li className="flex items-center gap-2 text-blue-600">
+              ✔{" "}
+              <span className="text-gray-700">Long-term cost optimization</span>
+            </li>
           </ul>
 
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg active:scale-95">
+          <a
+            href="https://drive.google.com/file/d/1Ga9phmWfF-bzkRjzqunz0yznrJzTi3BB/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg active:scale-95"
+          >
             Discover Our Process
-          </button>
+          </a>
         </div>
-
         {/* RIGHT SIDE – VIDEO WITH CONTROLS */}
         <div className="relative group">
           <div className="absolute -inset-4 bg-blue-100 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 transition duration-500"></div>
@@ -78,14 +102,14 @@ function SectionD() {
 
             {/* Hover Overlay Controls */}
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-6 gap-3">
-              <button 
+              <button
                 onClick={handlePiP}
                 className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition border border-white/30"
                 title="Picture in Picture"
               >
                 <SquareStack size={20} />
               </button>
-              <button 
+              <button
                 onClick={handleFullScreen}
                 className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition border border-white/30"
                 title="Full Screen"

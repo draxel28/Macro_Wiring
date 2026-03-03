@@ -1,6 +1,6 @@
-import React from "react";
-import { useState } from "react";
-import { supabase } from "../lib/supabse";
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { ArrowUp } from "lucide-react"; // Imported for the button icon
 
 export default function Contact() {
   /* <Supabase>*/
@@ -12,6 +12,53 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // --- SCROLL TO TOP STATE ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // pop up submit
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false);
+      }, 4000); // disappears after 4 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+  // Monitor scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show button after scrolling 400px
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      // Check if user is near the bottom to adjust button position (overlap prevention)
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +90,6 @@ export default function Contact() {
   };
 
   /* function for quotation*/
-
   const handleQuotationClick = () => {
     setSubject("Request for Quotation");
 
@@ -66,7 +112,14 @@ Thank you.`,
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white relative">
+      {success && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] animate-slideDown">
+          <div className="bg-green-600 text-white px-6 py-4 rounded-xl shadow-2xl font-medium">
+            Your message has been submitted successfully.
+          </div>
+        </div>
+      )}
       <div className="tech-header-container text-white py-16 px-6 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 pointer-events-none">
           <div className="motherboard-traces opacity-20"></div>
@@ -92,21 +145,15 @@ Thank you.`,
       {/* MAIN CONTACT SECTION */}
       <div className="bg-white py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          {/* Two Column Layout */}
           <div className="grid md:grid-cols-2 gap-16">
             {/* LEFT SIDE – CORPORATE DETAILS */}
-
             <div className="space-y-12">
-              {/* CONTACT */}
               <div className="border-l-4 border-blue-600 pl-6">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-4">
                   Contact
                 </h3>
-
                 <p className="text-gray-800 font-semibold mb-3">Inquiries</p>
-
                 <div className="space-y-3 text-gray-600">
-                  {/* Phone 1 */}
                   <a
                     href="tel:+63464377204"
                     className="flex items-center gap-3 hover:text-blue-600 transition"
@@ -126,8 +173,6 @@ Thank you.`,
                     </svg>
                     (+63 46) 437-7204
                   </a>
-
-                  {/* Phone 2 */}
                   <a
                     href="tel:+63464772499"
                     className="flex items-center gap-3 hover:text-blue-600 transition"
@@ -147,8 +192,6 @@ Thank you.`,
                     </svg>
                     (+63 46) 477-2499
                   </a>
-
-                  {/* Email */}
                   <a
                     href="mailto:sales@macrowiring.co"
                     className="flex items-center gap-3 hover:text-blue-600 transition mt-4"
@@ -169,8 +212,6 @@ Thank you.`,
                     sales@macrowiring.co
                   </a>
                 </div>
-
-                {/* Request Quotation Button */}
                 <div className="mt-6">
                   <button
                     onClick={handleQuotationClick}
@@ -181,20 +222,16 @@ Thank you.`,
                 </div>
               </div>
 
-              {/* LOCATION */}
               <div className="border-l-4 border-blue-600 pl-6">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-4">
                   Location
                 </h3>
-
                 <p className="text-gray-600 leading-relaxed mb-6">
                   Lot 3 Block 17 Phase 4 <br />
                   Cavite Economic Zone <br />
                   Rosario, Cavite <br />
                   Philippines 4106
                 </p>
-
-                {/* Mini Google Map */}
                 <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                   <iframe
                     title="Macro Wiring Location"
@@ -216,7 +253,6 @@ Thank you.`,
               <h3 className="text-2xl font-bold text-gray-900 mb-8">
                 Submit an Inquiry
               </h3>
-
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -230,7 +266,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -243,7 +278,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Subject
@@ -256,7 +290,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Message
@@ -265,10 +298,10 @@ Thank you.`,
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
+                    rows="5"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   ></textarea>
                 </div>
-
                 <button
                   type="submit"
                   disabled={loading}
@@ -276,12 +309,6 @@ Thank you.`,
                 >
                   {loading ? "Sending..." : "Send Message"}
                 </button>
-
-                {success && (
-                  <p className="text-green-600 mt-4 font-medium">
-                    Your message has been submitted successfully.
-                  </p>
-                )}
 
                 {error && (
                   <p className="text-red-600 mt-4 font-medium">{error}</p>
@@ -291,6 +318,22 @@ Thank you.`,
           </div>
         </div>
       </div>
+
+      {/* --- GLASSMORPHISM SCROLL TO TOP BUTTON --- */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? "bottom-24 right-8" : "bottom-8 right-8"}
+          ${showScrollTop ? "opacity-100 scale-100" : "opacity-0 scale-50 translate-y-10 pointer-events-none"}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
     </div>
   );
 }

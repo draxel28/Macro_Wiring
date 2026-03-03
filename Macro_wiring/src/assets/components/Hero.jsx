@@ -72,12 +72,13 @@ function Hero() {
               View Our Products
             </Link>
 
-            <a 
-              href="#contact" 
-              className="border-2 border-white/30 hover:border-white/100 backdrop-blur-sm px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 text-center"
-            >
-              Get In Touch
-            </a>
+{/* Changed from <a> to <Link> to navigate to the Contact page */}
+          <Link 
+            to="/contact" 
+            className="border-2 border-white/30 hover:border-white/100 backdrop-blur-sm px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 text-center"
+          >
+            Get In Touch
+          </Link>
           </div>
         </div>
       </section>

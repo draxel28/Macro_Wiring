@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 
-function Navbar() {
+function Navbar({ setIsAdminAuthenticated }) {
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
 
@@ -36,7 +36,7 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center">
           <Link to="/" onClick={closeMenu}>
             <h1 className="text-xl font-bold hover:text-blue-400 transition cursor-pointer">
-              Drexel B. Santos
+              Macro Wiring Technologies Co. Inc.
             </h1>
           </Link>
 
