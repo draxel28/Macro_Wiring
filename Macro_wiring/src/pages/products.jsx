@@ -29,18 +29,26 @@ const productData = [
         name: "WH-1001",
         description: "Automotive wire harness",
         image: CableAssy,
+        gallery: [CableAssy2, CableAssy3, CableAssy4],
       },
       {
         name: "WH-1002",
         description: "Industrial wire harness",
         image: CableAssy2,
+        gallery: [CableAssy2, CableAssy3, CableAssy4],
       },
       {
         name: "WH-1003",
         description: "Custom wire harness",
         image: CableAssy3,
+        gallery: [CableAssy3, CableAssy, CableAssy4],
       },
-      { name: "WH-1004", description: "Heavy-duty harness", image: CableAssy4 },
+      {
+        name: "WH-1004",
+        description: "Heavy-duty harness",
+        image: CableAssy4,
+        gallery: [CableAssy4, CableAssy3],
+      },
     ],
   },
   {
@@ -82,27 +90,6 @@ const productData = [
     ],
   },
 ];
-
-// --- HIGHLIGHT COMPONENT ---
-const HighlightText = ({ text, highlight }) => {
-  if (!highlight.trim()) return <span>{text}</span>;
-  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  const parts = text.split(regex);
-
-  return (
-    <span>
-      {parts.map((part, i) => 
-        regex.test(part) ? (
-          <mark key={i} className="bg-yellow-200 text-blue-900 rounded-sm px-0.5 font-bold">
-            {part}
-          </mark>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
-    </span>
-  );
-};
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -166,9 +153,9 @@ const Products = () => {
   );
 
   const filteredProducts = allProducts.filter((product) => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategories.length === 0 ||
       selectedCategories.includes(product.category);
@@ -205,7 +192,6 @@ const Products = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
-          
           {/* Sidebar Filter */}
           <div className="md:col-span-1">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
@@ -225,40 +211,22 @@ const Products = () => {
                 <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">
                   Categories
                 </h3>
-                {productData.map((cat, index) => {
-                  const isChecked = selectedCategories.includes(cat.category);
-                  return (
-                    <label
-                      key={index}
-                      className={`flex items-center justify-between p-2 rounded-lg cursor-pointer group transition-all duration-300 ${
-                        isChecked ? "bg-blue-50/50" : "hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => handleCategoryChange(cat.category)}
-                          className="w-4 h-4 accent-blue-600 rounded cursor-pointer"
-                        />
-                        <span className={`transition-colors duration-300 text-sm ${
-                          isChecked ? "text-blue-700 font-semibold" : "text-gray-700 group-hover:text-blue-600"
-                        }`}>
-                          {cat.category}
-                        </span>
-                      </div>
-                      
-                      {/* Tech-styled Count Badge */}
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold transition-all duration-300 border ${
-                        isChecked 
-                        ? "bg-blue-600 text-white border-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.5)]" 
-                        : "bg-gray-100 text-gray-500 border-gray-200 group-hover:border-blue-200"
-                      }`}>
-                        {cat.items.length.toString().padStart(2, '0')}
-                      </span>
-                    </label>
-                  );
-                })}
+                {categories.map((category, index) => (
+                  <label
+                    key={index}
+                    className="flex items-center space-x-3 cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => handleCategoryChange(category)}
+                      className="w-4 h-4 accent-blue-600 rounded"
+                    />
+                    <span className="text-gray-700 group-hover:text-blue-600 transition text-sm">
+                      {category}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
           </div>
@@ -276,9 +244,10 @@ const Products = () => {
                 {filteredProducts.map((product, i) => (
                   <ProductCard
                     key={i}
-                    name={<HighlightText text={product.name} highlight={searchTerm} />}
-                    description={<HighlightText text={product.description} highlight={searchTerm} />}
+                    name={product.name}
+                    description={product.description}
                     image={product.image}
+                    gallery={product.gallery || [product.image]}
                   />
                 ))}
               </div>
