@@ -42,13 +42,20 @@ const productData = [
         name: "WH-1002",
         description: "Industrial wire harness",
         image: CableAssy2,
+        gallery: [CableAssy2, CableAssy3, CableAssy4],
       },
       {
         name: "WH-1003",
         description: "Custom wire harness",
         image: CableAssy3,
+        gallery: [CableAssy3, CableAssy, CableAssy4],
       },
-      { name: "WH-1004", description: "Heavy-duty harness", image: CableAssy4 },
+      {
+        name: "WH-1004",
+        description: "Heavy-duty harness",
+        image: CableAssy4,
+        gallery: [CableAssy4, CableAssy3],
+      },
     ],
   },
   {
@@ -192,9 +199,9 @@ const Products = () => {
   );
 
   const filteredProducts = allProducts.filter((product) => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategories.length === 0 ||
       selectedCategories.includes(product.category);
@@ -222,7 +229,6 @@ const Products = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
-          
           {/* Sidebar Filter */}
           <div className="md:col-span-1">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28 h-fit">
