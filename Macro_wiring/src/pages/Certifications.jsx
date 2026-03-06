@@ -38,6 +38,27 @@ const certData = [
   },
 ];
 
+// --- HIGHLIGHT FUNCTION ---
+const HighlightText = ({ text, highlight }) => {
+  if (!highlight.trim()) return <span>{text}</span>;
+  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <span>
+      {parts.map((part, i) => 
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-200 text-blue-900 rounded-sm px-0.5 font-bold">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 const Certifications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -49,19 +70,16 @@ const Certifications = () => {
   // Monitor scroll position
   useEffect(() => {
     const handleScroll = () => {
-      // Show/Hide logic
       if (window.scrollY > 400) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
       }
 
-      // Overlap prevention logic
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
       const scrolled = window.scrollY;
 
-      // Adjust the 120 value based on your footer height
       if (scrolled + windowHeight > fullHeight - 120) {
         setIsAtBottom(true);
       } else {
@@ -87,10 +105,19 @@ const Certifications = () => {
   );
 
   const filteredCerts = allCerts.filter((cert) => {
-    const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+        cert.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        cert.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || cert.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Helper function to get count for each category
+  const getCategoryCount = (catName) => {
+    if (catName === "All") return allCerts.length;
+    const category = certData.find((c) => c.category === catName);
+    return category ? category.items.length : 0;
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen relative">
@@ -138,19 +165,29 @@ const Certifications = () => {
               </div>
               <div className="space-y-2">
                 <h3 className="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-4">Categories</h3>
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      selectedCategory === cat
-                      ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
-                      : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+                {categories.map((cat) => {
+                  const isActive = selectedCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`w-full flex justify-between items-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                        isActive
+                        ? "bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] translate-x-1"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                      }`}
+                    >
+                      <span className="tracking-tight">{cat}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold transition-all duration-300 ${
+                        isActive 
+                        ? "bg-white/20 text-white border border-white/30" 
+                        : "bg-blue-50 text-blue-600 border border-blue-100"
+                      }`}>
+                        {getCategoryCount(cat)}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -169,12 +206,16 @@ const Certifications = () => {
                       <img src={cert.image} alt={cert.name} className="max-h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-gray-900 leading-tight">{cert.name}</h3>
+                      <h3 className="font-bold text-gray-900 leading-tight">
+                        <HighlightText text={cert.name} highlight={searchTerm} />
+                      </h3>
                       <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase">
                         {cert.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500">{cert.description}</p>
+                    <p className="text-sm text-gray-500">
+                      <HighlightText text={cert.description} highlight={searchTerm} />
+                    </p>
                   </div>
                 ))}
               </div>

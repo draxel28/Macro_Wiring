@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Lock, ShieldCheck, Scale, FileText, CheckCircle2 } from "lucide-react";
+import { Lock, ShieldCheck, Scale, CheckCircle2, ChevronRight } from "lucide-react";
 
 // Memoized checkbox for stable rendering with larger text
 const AgreementCheckbox = React.memo(({ checked, onChange, label }) => (
@@ -56,32 +56,40 @@ const CookieConsent = () => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/95 backdrop-blur-2xl transition-all duration-1000 p-4">
       
       {!isWelcoming ? (
-        /* --- HIGH READABILITY CONSENT CARD --- */
-        <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
+        /* --- RESPONSIVE OPTIMIZED CONSENT CARD --- */
+        <div className="bg-white w-full max-w-xl md:max-w-2xl rounded-[2.5rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-fade-in relative transform-gpu">
           
-          {/* Header Section */}
-          <div className="p-10 pb-6 flex flex-col items-center text-center">
-            <div className="bg-blue-600 text-white p-5 rounded-2xl mb-6 shadow-xl shadow-blue-200">
-              <Lock size={36} />
+          {/* Header Section - Scaled for screen height */}
+          <div className="p-6 md:p-10 pb-4 md:pb-6 flex flex-col items-center text-center">
+            <div className="bg-blue-600 text-white p-4 md:p-5 rounded-2xl mb-4 md:mb-6 shadow-xl shadow-blue-200">
+              <Lock size={30} className="md:w-9 md:h-9" />
             </div>
-            <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Privacy & Data Consent</h2>
-            <p className="text-[14px] text-gray-500 leading-relaxed max-w-md">
-              In compliance with the <b>Philippine Data Privacy Act (RA 10173)</b>, we require your consent to use cookies for functionality and traffic analysis.
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2 tracking-tight">Legal Compliance</h2>
+            <p className="text-[13px] md:text-[14px] text-gray-500 leading-relaxed max-w-lg">
+              In compliance with the <b>Philippine Data Privacy Act of 2012 (RA 10173)</b>, Macro Wiring Technologies Co. Inc. ensures all personal data is handled securely.
             </p>
           </div>
 
-          {/* Expanded Legal Content Area */}
-          <div className="mx-10 p-8 bg-gray-50 rounded-[2rem] border border-gray-100 space-y-8 max-h-[40vh] overflow-y-auto custom-scrollbar shadow-inner">
+          {/* Legal Content Area - Kept 100% of original content */}
+          <div className="mx-4 md:mx-10 p-6 md:p-8 bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 space-y-8 max-h-[35vh] md:max-h-[45vh] overflow-y-auto custom-scrollbar shadow-inner">
             
-            {/* Policy Section */}
+            {/* Privacy Policy Section */}
             <section className="space-y-4">
               <div className="flex items-center gap-3 text-green-600">
                 <ShieldCheck size={22} />
                 <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Privacy Policy</h3>
               </div>
-              <p className="text-[14px] text-gray-600 leading-relaxed">
-                Data is processed in line with our <b>ISO 9001:2015</b> quality standards. You have the right to access, correct, or request deletion of submitted data.
-              </p>
+              <div className="space-y-4 text-[14px] text-gray-600 leading-relaxed">
+                <p>
+                  We collect personal information (Name, Email, Enquiry Details) <b>only</b> when voluntarily submitted via our Contact Us form. This data is used exclusively to respond to your specific business inquiries and is processed in line with our <b>ISO 9001:2015</b> quality procedures.
+                </p>
+                <p>
+                  <b>Information Security:</b> We do not provide public user accounts. Your information is stored in secured internal systems protected against unauthorized access. We do not sell or share details with third-party marketers.
+                </p>
+                <p>
+                  <b>Your Privacy Rights:</b> You have the right to request access to the information you submitted, ask for its correction, or request that we permanently delete your inquiry data from our records.
+                </p>
+              </div>
             </section>
 
             <div className="h-px bg-gray-200 w-full" />
@@ -90,16 +98,21 @@ const CookieConsent = () => {
             <section className="space-y-4">
               <div className="flex items-center gap-3 text-blue-600">
                 <Scale size={22} />
-                <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Terms of Service</h3>
+                <h3 className="text-[12px] font-black uppercase tracking-[0.15em]">Terms & Conditions</h3>
               </div>
+              <p className="text-[13px] text-gray-500 italic">
+                Access to and use of this website is subject to the laws of the Republic of the Philippines.
+              </p>
               <div className="space-y-3">
                 {[
-                  { t: "Philippine Scope", d: "Information is applicable specifically within the Philippines." },
-                  { t: "Intellectual Property", d: "Reproduction of Macro Wiring source code or images is prohibited." },
-                  { t: "Liability", d: "Use of this site is at the user's risk." }
+                  { t: "Philippine Scope", d: "Information concerning products or services is applicable only in the Philippines." },
+                  { t: "Intellectual Property", d: "Distribution, modification, or reproduction of content (text, images, videos, source code) is prohibited without written permission." },
+                  { t: "Liability Disclaimer", d: "Browsing is at the user's risk. We assume no liability for errors or omissions in site contents." },
+                  { t: "Communications", d: "Inquiries transmitted to this site are treated as non-confidential for business processing purposes." },
+                  { t: "Third-Party Links", d: "We are not responsible for the content of any off-site pages or linked websites." }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-3 items-start">
-                    <FileText size={16} className="text-gray-400 mt-1 flex-shrink-0" />
+                    <ChevronRight size={16} className="text-blue-500 mt-1 flex-shrink-0" />
                     <p className="text-[14px] text-gray-600 leading-snug">
                       <span className="font-bold text-gray-800">{item.t}:</span> {item.d}
                     </p>
@@ -110,7 +123,7 @@ const CookieConsent = () => {
           </div>
 
           {/* Action Area */}
-          <div className="p-10 pt-8 space-y-6">
+          <div className="p-6 md:p-10 pt-6 md:pt-8 space-y-6">
             <AgreementCheckbox 
               checked={hasAgreedMain}
               onChange={() => setHasAgreedMain(!hasAgreedMain)}
@@ -120,7 +133,7 @@ const CookieConsent = () => {
             <button 
               disabled={!hasAgreedMain}
               onClick={handleAcceptMain}
-              className={`w-full font-black py-5 rounded-2xl transition-all uppercase tracking-widest text-sm shadow-2xl active:scale-95 ${
+              className={`w-full font-black py-4 md:py-5 rounded-2xl transition-all uppercase tracking-widest text-xs md:text-sm shadow-2xl active:scale-95 ${
                 hasAgreedMain 
                 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-100 cursor-pointer' 
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
@@ -131,7 +144,7 @@ const CookieConsent = () => {
           </div>
         </div>
       ) : (
-        /* --- NEW PROFESSIONAL TYPOGRAPHY WELCOME --- */
+        /* --- WELCOME ANIMATION --- */
         <div className="flex flex-col items-center justify-center text-center px-6 max-w-4xl">
           <p className="text-blue-400 text-xl md:text-2xl font-light uppercase tracking-[0.6em] mb-4 animate-welcome-text">
             Welcome to
@@ -140,7 +153,7 @@ const CookieConsent = () => {
             <h1 className="text-white text-4xl md:text-7xl font-black tracking-tighter leading-none animate-text-zoom-pass">
               MACRO WIRING <br />
               <span className="text-blue-500">TECHNOLOGIES</span> <br />
-              <span className="text-2xl md:text-4xl font-light tracking-[0.3em] text-gray-400">COMPANY INC.</span>
+              <span className="text-2xl md:text-4xl font-light tracking-[0.3em] text-gray-400 uppercase">COMPANY INC.</span>
             </h1>
             <div className="absolute inset-0 bg-blue-600/10 blur-[120px] rounded-full animate-glow-pulse -z-10" />
           </div>
@@ -150,10 +163,9 @@ const CookieConsent = () => {
       <style>{`
         .transform-gpu { transform: translateZ(0); backface-visibility: hidden; }
         
-        /* Custom Clean Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
         
         @keyframes welcomeText { 
           0% { opacity: 0; transform: translateY(20px); } 
@@ -173,7 +185,7 @@ const CookieConsent = () => {
         .animate-text-zoom-pass { animation: textZoomPass 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .animate-glow-pulse { animation: glowPulse 3.2s ease-out forwards; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}</style>
     </div>

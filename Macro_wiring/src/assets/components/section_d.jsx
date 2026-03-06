@@ -54,9 +54,14 @@ function SectionD() {
             <li className="flex items-center gap-2 text-blue-600">✔ <span className="text-gray-700">Long-term cost optimization</span></li>
           </ul>
 
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg active:scale-95">
-            Discover Our Process
-          </button>
+          <a 
+            href="https://drive.google.com/file/d/1m7t9BEXZWlw5-bRC0msuVJUDWF3UQ8GM/view?usp=sharing"
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg active:scale-95"
+          >
+            Watch Full Video Here
+          </a>
         </div>
 
         {/* RIGHT SIDE – VIDEO WITH CONTROLS */}

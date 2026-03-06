@@ -1,6 +1,6 @@
-import React from "react";
-import { useState } from "react";
-import { supabase } from "../lib/supabse";
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { ArrowUp, Clock, Phone, Mail, CheckCircle, AlertCircle } from "lucide-react"; 
 
 export default function Contact() {
   /* <Supabase>*/
@@ -12,6 +12,52 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // --- SCROLL TO TOP STATE ---
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Auto-hide success or error message after 3 seconds
+  useEffect(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        setSuccess(false);
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
+
+  // Monitor scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      const scrolled = window.scrollY;
+
+      if (scrolled + windowHeight > fullHeight - 120) {
+        setIsAtBottom(true);
+      } else {
+        setIsAtBottom(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,23 +88,10 @@ export default function Contact() {
     setLoading(false);
   };
 
-  /* function for quotation*/
-
   const handleQuotationClick = () => {
     setSubject("Request for Quotation");
-
     setMessage(
-      `Good day,
-
-We would like to request a quotation for the following:
-
-Product/Service:
-Estimated Quantity:
-Target Delivery Date:
-
-Please advise on pricing, lead time, and terms.
-
-Thank you.`,
+      `Good day,\n\nWe would like to request a quotation for the following:\n\nProduct/Service:\nEstimated Quantity:\nTarget Delivery Date:\n\nPlease advise on pricing, lead time, and terms.\n\nThank you.`
     );
 
     const formSection = document.getElementById("contact-form");
@@ -66,7 +99,37 @@ Thank you.`,
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white relative">
+      {/* FLOATING SUCCESS MESSAGE */}
+      {success && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-white border border-green-100 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex items-center gap-4">
+            <div className="bg-green-500 p-2 rounded-full text-white shrink-0">
+              <CheckCircle size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Submission Successful</p>
+              <p className="text-xs text-slate-500 font-medium">Your message has been sent to our team.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING ERROR MESSAGE */}
+      {error && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="bg-white border border-red-100 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] rounded-2xl p-4 flex items-center gap-4">
+            <div className="bg-red-500 p-2 rounded-full text-white shrink-0">
+              <AlertCircle size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Submission Failed</p>
+              <p className="text-xs text-slate-500 font-medium">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="tech-header-container text-white py-16 px-6 relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 pointer-events-none">
           <div className="motherboard-traces opacity-20"></div>
@@ -89,116 +152,77 @@ Thank you.`,
         </div>
       </div>
 
-      {/* MAIN CONTACT SECTION */}
       <div className="bg-white py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          {/* Two Column Layout */}
           <div className="grid md:grid-cols-2 gap-16">
             {/* LEFT SIDE – CORPORATE DETAILS */}
-
             <div className="space-y-12">
-              {/* CONTACT */}
               <div className="border-l-4 border-blue-600 pl-6">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-4">
                   Contact
                 </h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div>
+                    <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider">Inquiries</p>
+                    <div className="space-y-3 text-gray-600 text-sm">
+                      <a href="tel:+63464377204" className="flex items-center gap-3 hover:text-blue-600 transition">
+                        <Phone size={14} className="text-blue-600" /> (+63 46) 437-7204
+                      </a>
+                      <a href="tel:+63464772499" className="flex items-center gap-3 hover:text-blue-600 transition">
+                        <Phone size={14} className="text-blue-600" /> (+63 46) 477-2499
+                      </a>
+                      <a href="mailto:sales@macrowiring.co" className="flex items-center gap-3 hover:text-blue-600 transition pt-1">
+                        <Mail size={14} className="text-blue-600" /> sales@macrowiring.co
+                      </a>
+                    </div>
+                  </div>
 
-                <p className="text-gray-800 font-semibold mb-3">Inquiries</p>
-
-                <div className="space-y-3 text-gray-600">
-                  {/* Phone 1 */}
-                  <a
-                    href="tel:+63464377204"
-                    className="flex items-center gap-3 hover:text-blue-600 transition"
-                  >
-                    <svg
-                      className="w-4 h-4 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.516 2.065a2 2 0 01-.45 1.916l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.916-.45l2.065.516A2 2 0 0119 18.72V21a2 2 0 01-2 2h-1C7.716 23 1 16.284 1 8V7a2 2 0 012-2z"
-                      />
-                    </svg>
-                    (+63 46) 437-7204
-                  </a>
-
-                  {/* Phone 2 */}
-                  <a
-                    href="tel:+63464772499"
-                    className="flex items-center gap-3 hover:text-blue-600 transition"
-                  >
-                    <svg
-                      className="w-4 h-4 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.516 2.065a2 2 0 01-.45 1.916l-1.27 1.27a16 16 0 006.586 6.586l1.27-1.27a2 2 0 011.916-.45l2.065.516A2 2 0 0119 18.72V21a2 2 0 01-2 2h-1C7.716 23 1 16.284 1 8V7a2 2 0 012-2z"
-                      />
-                    </svg>
-                    (+63 46) 477-2499
-                  </a>
-
-                  {/* Email */}
-                  <a
-                    href="mailto:sales@macrowiring.co"
-                    className="flex items-center gap-3 hover:text-blue-600 transition mt-4"
-                  >
-                    <svg
-                      className="w-4 h-4 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16 12H8m8 0l-4 4m4-4l-4-4M4 6h16v12H4z"
-                      />
-                    </svg>
-                    sales@macrowiring.co
-                  </a>
+                  <div>
+                    <p className="text-gray-800 font-semibold mb-3 uppercase text-xs tracking-wider flex items-center gap-2">
+                        Availability Hours
+                    </p>
+                    <div className="grid grid-cols-1 gap-2 text-gray-600 text-sm font-medium">
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 6:00 AM - 3:00 PM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 7:00 AM - 4:00 PM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 6:00 PM - 3:00 AM
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-100">
+                        <Clock size={12} className="text-blue-500" /> 7:00 PM - 4:00 AM
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Request Quotation Button */}
-                <div className="mt-6">
+                <div className="mt-8">
                   <button
                     onClick={handleQuotationClick}
-                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-md hover:shadow-blue-200"
                   >
                     Request a Quotation
                   </button>
                 </div>
               </div>
 
-              {/* LOCATION */}
               <div className="border-l-4 border-blue-600 pl-6">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-4">
                   Location
                 </h3>
-
                 <p className="text-gray-600 leading-relaxed mb-6">
                   Lot 3 Block 17 Phase 4 <br />
                   Cavite Economic Zone <br />
                   Rosario, Cavite <br />
                   Philippines 4106
                 </p>
-
-                {/* Mini Google Map */}
                 <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                   <iframe
                     title="Macro Wiring Location"
-                    src="https://www.google.com/maps?q=Cavite%20Economic%20Zone%20Rosario%20Cavite&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3864.6756201314954!2d120.89832747585093!3d14.417244986048166!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33962d398935c103%3A0xc664980755a5b565!2sCavite%20Economic%20Zone!5e0!3m2!1sen!2sph!4v1709572000000!5m2!1sen!2sph"
                     width="100%"
                     height="200"
                     loading="lazy"
@@ -216,7 +240,6 @@ Thank you.`,
               <h3 className="text-2xl font-bold text-gray-900 mb-8">
                 Submit an Inquiry
               </h3>
-
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -230,7 +253,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -243,7 +265,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Subject
@@ -256,7 +277,6 @@ Thank you.`,
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Message
@@ -265,10 +285,10 @@ Thank you.`,
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
+                    rows="5"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                   ></textarea>
                 </div>
-
                 <button
                   type="submit"
                   disabled={loading}
@@ -276,21 +296,27 @@ Thank you.`,
                 >
                   {loading ? "Sending..." : "Send Message"}
                 </button>
-
-                {success && (
-                  <p className="text-green-600 mt-4 font-medium">
-                    Your message has been submitted successfully.
-                  </p>
-                )}
-
-                {error && (
-                  <p className="text-red-600 mt-4 font-medium">{error}</p>
-                )}
               </form>
             </div>
           </div>
         </div>
       </div>
+
+      <button
+        onClick={scrollToTop}
+        className={`fixed z-50 p-4 
+          bg-white/20 backdrop-blur-md text-gray-800 
+          rounded-full shadow-xl border border-white/40
+          transition-all duration-500 
+          hover:bg-blue-600 hover:text-white hover:border-transparent hover:-translate-y-2 
+          active:scale-95 flex items-center justify-center 
+          ${isAtBottom ? 'bottom-24 right-8' : 'bottom-8 right-8'}
+          ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
+
     </div>
   );
 }

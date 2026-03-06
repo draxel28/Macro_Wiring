@@ -72,12 +72,13 @@ function Hero() {
               View Our Products
             </Link>
 
-            <a 
-              href="#contact" 
-              className="border-2 border-white/30 hover:border-white/100 backdrop-blur-sm px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 text-center"
-            >
-              Get In Touch
-            </a>
+{/* Changed from <a> to <Link> to navigate to the Contact page */}
+          <Link 
+            to="/contact" 
+            className="border-2 border-white/30 hover:border-white/100 backdrop-blur-sm px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 text-center"
+          >
+            Get In Touch
+          </Link>
           </div>
         </div>
       </section>
@@ -86,7 +87,7 @@ function Hero() {
       <section className="relative z-10 w-full bg-white border-y border-gray-200 overflow-hidden -mt-6 md:mt-0 py-6 md:py-14">
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-gray-400 text-[9px] md:text-xs uppercase tracking-[0.4em] mb-6 md:mb-10 font-bold">
-            Trusted Industry Partners
+            Certifications and Awards
           </p>
           
           <div className="marquee-wrapper">
